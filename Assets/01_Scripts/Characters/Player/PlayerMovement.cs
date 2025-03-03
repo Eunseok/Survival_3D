@@ -4,19 +4,18 @@ using UnityEngine;
 [ RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed;
-    public float jumpPower;
-
     private Rigidbody _rigidbody;
     private CharacterBody _characterBody;
+    private StatHandler statHandler;
 
     private Vector2 moveDirection;
     
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _characterBody = GetComponent<CharacterBody>(); 
-
+        _characterBody = GetComponent<CharacterBody>();
+        statHandler = GetComponent<StatHandler>();
+        
         InputManager.Instance.OnMoveInput += ctx => moveDirection = ctx;
         InputManager.Instance.OnJumpPressed += Jump;
     }
@@ -29,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         Vector3 direction = transform.forward * moveDirection.y + transform.right * moveDirection.x;
-        direction *= moveSpeed;
+        direction *= statHandler.Speed;
         direction.y = _rigidbody.velocity.y;
 
         _rigidbody.velocity = direction;
@@ -39,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_characterBody && _characterBody.IsGrounded())
         {
-            _rigidbody.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            _rigidbody.AddForce(Vector3.up * statHandler.JumpForce, ForceMode.Impulse);
         }
     }
 }

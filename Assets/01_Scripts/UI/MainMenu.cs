@@ -30,7 +30,7 @@ namespace Framework.UI.Scripts
         /// </summary>
         protected override void OnShow()
         {
-            Debug.Log($"MainMenu '{UIName}' is now shown.");
+            Debug.Log($"MainMenu {gameObject.name} is now shown.");
         }
 
         /// <summary>

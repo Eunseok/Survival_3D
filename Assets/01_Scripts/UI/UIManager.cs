@@ -24,10 +24,10 @@ namespace Framework.UI
         /// </summary>
         public void RegisterUI(BaseUI ui)
         {
-            if (ui == null || _uiDictionary.ContainsKey(ui.UIName)) return;
-
-            _uiDictionary.Add(ui.UIName, ui);
-            Debug.Log($"UI '{ui.UIName}' registered.");
+            // if (ui == null || _uiDictionary.ContainsKey(ui.UIName)) return;
+            //
+            // _uiDictionary.Add(ui.UIName, ui);
+            // Debug.Log($"UI '{ui.UIName}' registered.");
         }
 
         /// <summary>

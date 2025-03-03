@@ -6,12 +6,7 @@ namespace Framework.UI.Scripts
     /// 정적인 UI의 공통 베이스 클래스
     /// </summary>
     public abstract class BaseUI : MonoBehaviour
-    {
-        [Header("UI Settings")] [SerializeField]
-        private string uiName;
-
-        public string UIName => uiName;
-
+    { 
         public bool IsActive { get; private set; }
 
         /// <summary>
