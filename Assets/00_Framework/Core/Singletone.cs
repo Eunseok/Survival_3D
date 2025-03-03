@@ -2,19 +2,22 @@ using UnityEngine;
 
 namespace Framework.Utilities
 {
-    /// <summary>
-    /// 제네릭 형식 간에 정적 멤버를 공유하기 위해 비제네릭 기본 클래스를 정의합니다.
-    /// </summary>
     public abstract class SingletonBase : MonoBehaviour
     {
         protected static readonly object LockObject = new object();
         protected static bool IsApplicationQuitting;
+        protected static bool IsDontDestroyOnLoad = true;
+        
+        /// <summary>
+        /// DontDestroyOnLoad 활성화 여부를 설정할 수 있는 플래그입니다.
+        /// 기본값은 true입니다.
+        /// </summary>
+        protected void SetDontDestroyOnLoad(bool value)
+        {
+            IsDontDestroyOnLoad = value;
+        }
     }
 
-    /// <summary>
-    /// MonoBehaviour를 상속받은 싱글톤 베이스 제네릭 클래스입니다.
-    /// </summary>
-    /// <typeparam name="T">자식 클래스 타입</typeparam>
     public abstract class Singleton<T> : SingletonBase where T : MonoBehaviour
     {
         private static T _instance;
@@ -39,31 +42,36 @@ namespace Framework.Utilities
                         _instance = FindObjectOfType<T>() ?? CreateSingletonInstance();
                     }
                 }
+
                 return _instance;
             }
         }
+        
 
-        /// <summary>
-        /// Singleton 오브젝트를 생성합니다.
-        /// </summary>
         private static T CreateSingletonInstance()
         {
             const string singletonObjectName = nameof(T);
             var singletonObject = new GameObject(singletonObjectName);
             var instance = singletonObject.AddComponent<T>();
-            DontDestroyOnLoad(singletonObject);
+
+            if (IsDontDestroyOnLoad)
+            {
+                DontDestroyOnLoad(singletonObject);
+            }
+
             return instance;
         }
 
-        /// <summary>
-        /// 인스턴스 생명주기에서 재등록을 방지합니다.
-        /// </summary>
         protected virtual void Awake()
         {
             if (_instance == null)
             {
                 _instance = this as T;
-                DontDestroyOnLoad(gameObject);
+
+                if (IsDontDestroyOnLoad)
+                {
+                    DontDestroyOnLoad(gameObject);
+                }
             }
             else if (_instance != this)
             {
@@ -75,9 +83,6 @@ namespace Framework.Utilities
 
         protected abstract void InitializeManager();
 
-        /// <summary>
-        /// 애플리케이션 종료 시 플래그 설정.
-        /// </summary>
         protected virtual void OnApplicationQuit()
         {
             IsApplicationQuitting = true;
