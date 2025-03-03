@@ -7,7 +7,7 @@ public class InputManager : Singleton<InputManager>
 {
     private PlayerInputActions playerInput;
 
-    InputActionMap basic;
+    public InputActionMap Player => playerInput.Player;
 
     public event Action<Vector2> OnMoveInput;
     public event Action<Vector2> OnLookInput;
@@ -39,4 +39,5 @@ public class InputManager : Singleton<InputManager>
     {
         playerInput.Player.Disable();
     }
+
 }
