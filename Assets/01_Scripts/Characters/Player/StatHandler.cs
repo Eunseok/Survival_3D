@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class StatHandler : MonoBehaviour
 {
@@ -21,32 +22,12 @@ public class StatHandler : MonoBehaviour
 
 
     [Header("Conditions")] 
-    [SerializeField]
-    private Condition health;
-    [SerializeField]
-    private Condition hunger;
-    [SerializeField]
-    private Condition stamina;
+    public Condition Health;
+    public Condition Hunger;
+    public Condition Stamina;
 
-    public Condition Health => health;
-    public float HealthValue
-    {
-        get => health.curValue;
-        set => health.curValue = value;
-    }
-
-    public Condition Hunger => hunger;
-    public float HungerValue
-    {
-        get => hunger.curValue;
-        set => hunger.curValue = value;
-    }
-
-    public Condition Stamina => stamina;
-    public float StaminaValue
-    {
-        get => stamina.curValue;
-        set => stamina.curValue = value;
-    }
+    public float HealthValue => Health.CurValue;
+    public float HungerValue => Hunger.CurValue;
+    public float StaminaValue => Stamina.CurValue;
 
 }

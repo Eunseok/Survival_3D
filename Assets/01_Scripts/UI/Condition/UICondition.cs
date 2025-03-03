@@ -14,9 +14,9 @@ namespace _01_Scripts.UI.Condition
         private void Start()
         {
             StatHandler playerStatHandler = CharacterManager.Instance.Player.statHandler;
-            playerStatHandler.Health.onValueChangedUnityEvent += healthBar.SetCondition;
-            playerStatHandler.Hunger.onValueChangedUnityEvent += hungerBar.SetCondition;
-            playerStatHandler.Stamina.onValueChangedUnityEvent += staminaBar.SetCondition;
+            playerStatHandler.Health.OnValueChangedUnityEvent += healthBar.SetCondition;
+            playerStatHandler.Hunger.OnValueChangedUnityEvent += hungerBar.SetCondition;
+            playerStatHandler.Stamina.OnValueChangedUnityEvent += staminaBar.SetCondition;
         }
     }
 }

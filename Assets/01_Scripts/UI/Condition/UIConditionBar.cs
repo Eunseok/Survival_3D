@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +7,6 @@ public class UIConditionBar : MonoBehaviour
 
     public void SetCondition(float curValue, float maxValue)
     {
-        imgProgress.fillAmount = curValue/ maxValue;
+        imgProgress.fillAmount = Mathf.Clamp01(curValue/ maxValue);
     }
 }

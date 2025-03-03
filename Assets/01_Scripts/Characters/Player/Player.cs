@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
     public PlayerMovement playerMovement;
-    public ResourceController condition;
+    public ResourceController resourceController;
     public StatHandler statHandler;
     private void Awake()
     {
         CharacterManager.Instance.Player = this;
         
         playerMovement = GetComponent<PlayerMovement>();
-        condition = GetComponent<ResourceController>();
+        resourceController = GetComponent<ResourceController>();
         statHandler = GetComponent<StatHandler>();
     }
     
