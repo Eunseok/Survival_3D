@@ -5,7 +5,7 @@ namespace Framework.Utilities
     /// <summary>
     /// 로그 메시지를 관리하고 Unity 콘솔에 출력하는 유틸리티 클래스.
     /// </summary>
-    public static class Logger
+    public static class DebugLogger
     {
         /// <summary>
         /// 현재 디버그 로그 활성화 상태.
