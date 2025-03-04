@@ -1,5 +1,5 @@
-using System;
 using System.Collections;
+using Scripts.Characters;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,11 +8,11 @@ public class DamageIndicator : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private float duration;
 
-    private Color startColor;
+    private Color _startColor;
 
     private void Awake()
     {
-        startColor = image.color;
+        _startColor = image.color;
         image.enabled = false;
     }
 
@@ -22,15 +22,15 @@ public class DamageIndicator : MonoBehaviour
     }
 
 
-    private Coroutine coroutine;
+    private Coroutine _coroutine;
 
-    public void Flash()
+    private void Flash()
     {
-        if (coroutine != null) StopCoroutine(coroutine);
+        if (_coroutine != null) StopCoroutine(_coroutine);
 
         image.enabled = true;
-        image.color = startColor;
-        coroutine = StartCoroutine(FadeAway());
+        image.color = _startColor;
+        _coroutine = StartCoroutine(FadeAway());
     }
 
     private IEnumerator FadeAway()

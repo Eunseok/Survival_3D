@@ -1,5 +1,5 @@
+using Scripts.Characters;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class StatHandler : MonoBehaviour
 {
@@ -22,12 +22,12 @@ public class StatHandler : MonoBehaviour
 
 
     [Header("Conditions")] 
-    public Condition Health;
-    public Condition Hunger;
-    public Condition Stamina;
+    public Condition health;
+    public Condition hunger;
+     public Condition stamina;
 
-    public float HealthValue => Health.CurValue;
-    public float HungerValue => Hunger.CurValue;
-    public float StaminaValue => Stamina.CurValue;
+    public float HealthValue => health.CurValue;
+    public float HungerValue => hunger.CurValue;
+    public float StaminaValue => stamina.CurValue;
 
 }

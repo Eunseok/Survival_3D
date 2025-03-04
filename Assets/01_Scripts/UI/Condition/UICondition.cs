@@ -1,8 +1,9 @@
-using System;
+using Scripts.UI.Condition;
 using Framework.UI.Scripts;
+using Scripts.Characters;
 using UnityEngine;
 
-namespace _01_Scripts.UI.Condition
+namespace Scripts.UI.Condition
 {
     public class UICondition : BaseUI
     {
@@ -14,9 +15,9 @@ namespace _01_Scripts.UI.Condition
         private void Start()
         {
             StatHandler playerStatHandler = CharacterManager.Instance.Player.statHandler;
-            playerStatHandler.Health.OnValueChangedUnityEvent += healthBar.SetCondition;
-            playerStatHandler.Hunger.OnValueChangedUnityEvent += hungerBar.SetCondition;
-            playerStatHandler.Stamina.OnValueChangedUnityEvent += staminaBar.SetCondition;
+            playerStatHandler.health.OnValueChangedUnityEvent += healthBar.SetCondition;
+            playerStatHandler.hunger.OnValueChangedUnityEvent += hungerBar.SetCondition;
+            playerStatHandler.stamina.OnValueChangedUnityEvent += staminaBar.SetCondition;
         }
     }
 }

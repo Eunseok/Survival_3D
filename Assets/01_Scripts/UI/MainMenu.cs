@@ -1,6 +1,7 @@
+using Framework.UI.Scripts;
 using UnityEngine;
 
-namespace Framework.UI.Scripts
+namespace Scripts.UI
 {
     /// <summary>
     /// 메인 메뉴 UI 클래스

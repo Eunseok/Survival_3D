@@ -6,15 +6,15 @@ namespace Framework.SaveSystem
 {
     public class SaveManager : Singleton<SaveManager>
     {
-        private const string SAVE_FILE_NAME = "save_data.json"; // 저장 파일 이름
-        private string saveFilePath;
+        private const string SaveFileName = "save_data.json"; // 저장 파일 이름
+        private string _saveFilePath;
 
         public SaveData CurrentSaveData { get; private set; }
         
 
         protected override void InitializeManager()
         {
-            saveFilePath = Path.Combine(Application.persistentDataPath, SAVE_FILE_NAME);
+            _saveFilePath = Path.Combine(Application.persistentDataPath, SaveFileName);
 
             Load(); // 게임 시작 시 저장 파일 로드
         }
@@ -25,8 +25,8 @@ namespace Framework.SaveSystem
         public void Save()
         {
             string json = JsonUtility.ToJson(CurrentSaveData, true); // JSON 변환
-            File.WriteAllText(saveFilePath, json); // 파일로 저장
-            Debug.Log($"Data saved at: {saveFilePath}");
+            File.WriteAllText(_saveFilePath, json); // 파일로 저장
+            Debug.Log($"Data saved at: {_saveFilePath}");
         }
 
         /// <summary>
@@ -34,9 +34,9 @@ namespace Framework.SaveSystem
         /// </summary>
         public void Load()
         {
-            if (File.Exists(saveFilePath))
+            if (File.Exists(_saveFilePath))
             {
-                string json = File.ReadAllText(saveFilePath); // 파일에서 읽기
+                string json = File.ReadAllText(_saveFilePath); // 파일에서 읽기
                 CurrentSaveData = JsonUtility.FromJson<SaveData>(json); // JSON 파싱
                 Debug.Log("Save data loaded!");
             }

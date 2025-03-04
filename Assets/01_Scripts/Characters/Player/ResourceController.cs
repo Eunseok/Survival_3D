@@ -9,25 +9,25 @@ public interface IDamageable
 
 public class ResourceController : MonoBehaviour, IDamageable
 {
-    private StatHandler statHandler;
+    private StatHandler _statHandler;
     public event Action OnTakeDamage;
 
     private void Awake()
     {
-        statHandler = GetComponent<StatHandler>();
+        _statHandler = GetComponent<StatHandler>();
     }
 
     private void Update()
     {
-        statHandler.Hunger.PassiveApply();
-        statHandler.Stamina.PassiveApply();
+        _statHandler.hunger.PassiveApply();
+        _statHandler.stamina.PassiveApply();
         
-        if(statHandler.HungerValue <= 0f)
+        if(_statHandler.HungerValue <= 0f)
         {
-            statHandler.Health.PassiveApply();
+            _statHandler.health.PassiveApply();
         }
     
-        if( statHandler.HealthValue <= 0f)
+        if( _statHandler.HealthValue <= 0f)
         {
             Die();
         }
@@ -35,13 +35,13 @@ public class ResourceController : MonoBehaviour, IDamageable
     
     public void Heal(float amount)
     {
-        statHandler.Health.Apply(amount);
+        _statHandler.health.Apply(amount);
         OnTakeDamage?.Invoke();
     }
     
     public void Eat(float amount)
     { 
-        statHandler.Health.Apply(amount);
+        _statHandler.health.Apply(amount);
     }
     
     private void Die()
@@ -51,9 +51,9 @@ public class ResourceController : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
-        statHandler.Health.Apply(-damage);
+        _statHandler.health.Apply(-damage);
         OnTakeDamage?.Invoke(); 
-        if( statHandler.HealthValue <= 0f)
+        if( _statHandler.HealthValue <= 0f)
         {
             Die();
         }

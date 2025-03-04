@@ -3,7 +3,7 @@ using Framework.UI.Scripts;
 using Framework.Utilities;
 using UnityEngine;
 
-namespace Framework.UI
+namespace Scripts.UI
 {
     /// <summary>
     /// UIManager: 일반 UI와 PopupManager 관리

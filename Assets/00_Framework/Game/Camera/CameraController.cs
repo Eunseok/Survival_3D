@@ -12,12 +12,12 @@ public class CameraController : MonoBehaviour
     public float minXLook;
     public float maxXLook;
 
-    private float currentPitch; // 현재 X축(Pitch)의 회전 값
+    private float _currentPitch; // 현재 X축(Pitch)의 회전 값
 
     
     void Start()
     {
-        currentPitch = cameraContainer.localEulerAngles.x;
+        _currentPitch = cameraContainer.localEulerAngles.x;
         
         InputManager.Instance.OnLookInput += HandleMouseLook;
         
@@ -28,9 +28,9 @@ public class CameraController : MonoBehaviour
 
     private void HandleMouseLook(Vector2 mouseLook)
     {
-        currentPitch += mouseLook.y * lookSensitivity;
-        currentPitch = Mathf.Clamp(currentPitch, minXLook, maxXLook);
-        cameraContainer.localEulerAngles = new Vector3(-currentPitch, 0, 0);
+        _currentPitch += mouseLook.y * lookSensitivity;
+        _currentPitch = Mathf.Clamp(_currentPitch, minXLook, maxXLook);
+        cameraContainer.localEulerAngles = new Vector3(-_currentPitch, 0, 0);
         
         playerBody.eulerAngles += new Vector3(0, mouseLook.x * lookSensitivity, 0);
     }

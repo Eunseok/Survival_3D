@@ -2,28 +2,31 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-[Serializable]
-public class Condition
+namespace Scripts.Characters
 {
-    public event UnityAction<float, float> OnValueChangedUnityEvent;
-
-    [SerializeField] private float maxValue;
-    [SerializeField] private float curValue;
-    public float CurValue=> curValue;
-    [SerializeField] private float passiveValue;
-
-
-    public void Apply(float amount)
+    [Serializable]
+    public class Condition
     {
-        curValue = Mathf.Clamp(curValue + amount, 0f, maxValue);
+        public event UnityAction<float, float> OnValueChangedUnityEvent;
 
-        OnValueChangedUnityEvent?.Invoke(curValue, maxValue);
-    }
+        [SerializeField] private float maxValue;
+        [SerializeField] private float curValue;
+        public float CurValue=> curValue;
+        [SerializeField] private float passiveValue;
 
 
-    public void PassiveApply()
-    {
-        Apply(passiveValue * Time.deltaTime);
+        public void Apply(float amount)
+        {
+            curValue = Mathf.Clamp(curValue + amount, 0f, maxValue);
+
+            OnValueChangedUnityEvent?.Invoke(curValue, maxValue);
+        }
+
+
+        public void PassiveApply()
+        {
+            Apply(passiveValue * Time.deltaTime);
+        }
     }
 }
 

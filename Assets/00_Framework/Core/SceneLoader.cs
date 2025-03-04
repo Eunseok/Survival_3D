@@ -25,8 +25,8 @@ namespace Framework.Core
         [SerializeField] private TextMeshProUGUI progressText; // 진행률 텍스트
 
         // 상수 선언
-        private const float SCENE_ACTIVATION_THRESHOLD = 0.9f; // 씬 활성화 기준값
-        public Action OnSceneLoadedCallback;
+        private const float SceneActivationThreshold = 0.9f; // 씬 활성화 기준값
+        public event Action OnSceneLoadedCallback;
         
         protected override void InitializeManager()
         {
@@ -89,7 +89,7 @@ namespace Framework.Core
                     UpdateLoadingProgress(operation);
 
                     // 씬 로딩 90% 이상 완료 시 활성화
-                    if (operation.progress >= SCENE_ACTIVATION_THRESHOLD)
+                    if (operation.progress >= SceneActivationThreshold)
                     {
                         operation.allowSceneActivation = true;
                     }
@@ -116,7 +116,7 @@ namespace Framework.Core
         {
             if (progressBar == null && progressText == null) return;
 
-            float progress = Mathf.Clamp01(operation.progress / SCENE_ACTIVATION_THRESHOLD);
+            float progress = Mathf.Clamp01(operation.progress / SceneActivationThreshold);
 
             // UI 업데이트
             if (progressBar != null)

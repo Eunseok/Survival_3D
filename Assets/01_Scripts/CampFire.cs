@@ -9,17 +9,16 @@ namespace _01_Scripts
         [SerializeField] private float damagePerTick;
         [SerializeField] private float tickInterval;
 
-        private readonly HashSet<IDamageable> objectsInFire = new();
-        private readonly Dictionary<IDamageable, Coroutine> activeCoroutines = new();
+        private readonly HashSet<IDamageable> _objectsInFire = new();
+        private readonly Dictionary<IDamageable, Coroutine> _activeCoroutines = new();
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out IDamageable damageable))
             {
-                if (!objectsInFire.Contains(damageable))
+                if (_objectsInFire.Add(damageable))
                 {
-                    objectsInFire.Add(damageable);
-                    activeCoroutines[damageable] = StartCoroutine(ApplyBurnDamage(damageable));
+                    _activeCoroutines[damageable] = StartCoroutine(ApplyBurnDamage(damageable));
                 }
             }
         }
@@ -28,15 +27,15 @@ namespace _01_Scripts
         {
             if (other.TryGetComponent(out IDamageable damageable))
             {
-                if (objectsInFire.Contains(damageable))
+                if (_objectsInFire.Contains(damageable))
                 {
-                    objectsInFire.Remove(damageable);
+                    _objectsInFire.Remove(damageable);
 
                     // 해당 코루틴 정지
-                    if (activeCoroutines.ContainsKey(damageable))
+                    if (_activeCoroutines.ContainsKey(damageable))
                     {
-                        StopCoroutine(activeCoroutines[damageable]);
-                        activeCoroutines.Remove(damageable);
+                        StopCoroutine(_activeCoroutines[damageable]);
+                        _activeCoroutines.Remove(damageable);
                     }
                 }
             }
@@ -49,7 +48,7 @@ namespace _01_Scripts
             yield return new WaitForSeconds(tickInterval);
 
             // 이후 tickInterval마다 데미지를 적용
-            while (objectsInFire.Contains(target))
+            while (_objectsInFire.Contains(target))
             {
                 target.TakeDamage(damagePerTick);
                 yield return new WaitForSeconds(tickInterval);

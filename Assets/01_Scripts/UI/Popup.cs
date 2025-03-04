@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Framework.UI.Scripts
+namespace Scripts.UI
 {
     /// <summary>
     /// Popup 베이스 클래스

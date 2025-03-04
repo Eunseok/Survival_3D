@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Framework.UI.Scripts;
 using UnityEngine;
 
-namespace Framework.UI
+namespace Scripts.UI
 {
     /// <summary>
     /// PopupManager: 다양한 Popup UI 관리
@@ -13,7 +12,7 @@ namespace Framework.UI
         private readonly List<Popup> _activePopups = new(); // 활성화된 팝업 리스트
         private readonly Transform _parentTransform;
 
-        private const string POPUP_PREFAB_PATH = "Popups/"; // Resources/Popups 경로
+        private const string PopupPrefabPath = "Popups/"; // Resources/Popups 경로
 
         public PopupManager(Transform parentTransform)
         {
@@ -30,7 +29,7 @@ namespace Framework.UI
         {
             if (!_popupPrefabs.TryGetValue(popupName, out var prefab))
             {
-                prefab = Resources.Load<GameObject>(POPUP_PREFAB_PATH + popupName);
+                prefab = Resources.Load<GameObject>(PopupPrefabPath + popupName);
                 if (prefab == null)
                 {
                     Debug.LogError($"Popup prefab '{popupName}' not found in Resources!");

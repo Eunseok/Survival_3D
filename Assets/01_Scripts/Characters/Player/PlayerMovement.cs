@@ -6,17 +6,17 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody _rigidbody;
     private CharacterBody _characterBody;
-    private StatHandler statHandler;
+    private StatHandler _statHandler;
 
-    private Vector2 moveDirection;
+    private Vector2 _moveDirection;
     
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _characterBody = GetComponent<CharacterBody>();
-        statHandler = GetComponent<StatHandler>();
+        _statHandler = GetComponent<StatHandler>();
         
-        InputManager.Instance.OnMoveInput += ctx => moveDirection = ctx;
+        InputManager.Instance.OnMoveInput += ctx => _moveDirection = ctx;
         InputManager.Instance.OnJumpPressed += Jump;
     }
 
@@ -27,8 +27,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 direction = transform.forward * moveDirection.y + transform.right * moveDirection.x;
-        direction *= statHandler.Speed;
+        Vector3 direction = transform.forward * _moveDirection.y + transform.right * _moveDirection.x;
+        direction *= _statHandler.Speed;
         direction.y = _rigidbody.velocity.y;
 
         _rigidbody.velocity = direction;
@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_characterBody && _characterBody.IsGrounded())
         {
-            _rigidbody.AddForce(Vector3.up * statHandler.JumpForce, ForceMode.Impulse);
+            _rigidbody.AddForce(Vector3.up * _statHandler.JumpForce, ForceMode.Impulse);
         }
     }
 }

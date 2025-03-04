@@ -1,11 +1,14 @@
 using Framework.Utilities;
 
-public class CharacterManager : Singleton<CharacterManager>
+namespace Scripts.Characters
 {
-    protected override void InitializeManager()
+    public class CharacterManager : Singleton<CharacterManager>
     {
-        SetDontDestroyOnLoad(false);
-    }
+        protected override void InitializeManager()
+        {
+            SetDontDestroyOnLoad(false);
+        }
 
-    public Player Player { get;  set; }
+        public Player Player { get;  set; }
+    }
 }

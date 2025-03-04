@@ -5,12 +5,13 @@ using UnityEngine.InputSystem;
 
 public class InputManager : Singleton<InputManager>
 {
-    private PlayerInputActions playerInput;
+    private PlayerInputActions _playerInput;
 
-    public InputActionMap Player => playerInput.Player;
+    public InputActionMap Player => _playerInput.Player;
 
     public event Action<Vector2> OnMoveInput;
     public event Action<Vector2> OnLookInput;
+    public event Action OnInteractionPressed;
     public event Action OnJumpPressed;
 
     
@@ -21,23 +22,24 @@ public class InputManager : Singleton<InputManager>
 
     private void InitializeInputs()
     {
-        playerInput = new PlayerInputActions();
+        _playerInput = new PlayerInputActions();
 
-        playerInput.Player.Move.performed += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
-        playerInput.Player.Move.canceled += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
-        playerInput.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
-        playerInput.Player.Jump.started +=_ => OnJumpPressed?.Invoke();
+        _playerInput.Player.Move.performed += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
+        _playerInput.Player.Move.canceled += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
+        _playerInput.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
+        _playerInput.Player.Jump.started +=_ => OnJumpPressed?.Invoke();
+        _playerInput.Player.Interaction.started += _ => OnInteractionPressed?.Invoke();
 
     }
 
     private void OnEnable()
     {
-        playerInput.Player.Enable();
+        _playerInput.Player.Enable();
     }
 
     private void OnDisable()
     {
-        playerInput.Player.Disable();
+        _playerInput.Player.Disable();
     }
 
 }
