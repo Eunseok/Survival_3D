@@ -60,15 +60,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Inventory",
-                    "type": "Button",
-                    "id": "b87e6469-0c26-4302-a2ba-11899f5d4231",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Interaction",
                     "type": "Button",
                     "id": "c74d5509-4ece-4d7c-9ea1-d88bb729d005",
@@ -186,17 +177,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d4937ecb-05c0-4cc6-ab18-c93be0b235ba",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Inventory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -724,6 +704,34 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Shorcut",
+            "id": "6ce1f8ae-ecd9-44bf-aaaf-a5bbd31772b6",
+            "actions": [
+                {
+                    "name": "Inventory",
+                    "type": "Button",
+                    "id": "792deb1c-b64c-4802-8070-c5a3cfd0e69b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0fd5642e-3948-4086-a090-95dfd9561ada",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Inventory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

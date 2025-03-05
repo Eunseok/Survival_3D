@@ -15,6 +15,9 @@ public class ResourceController : MonoBehaviour, IDamageable
     private void Awake()
     {
         _statHandler = GetComponent<StatHandler>();
+        
+        SignalManager.Instance.ConnectSignal<float>("OnPlayerHeal", Heal);
+        SignalManager.Instance.ConnectSignal<float>("OnPlayerEat", Eat);
     }
 
     private void Update()
@@ -32,16 +35,18 @@ public class ResourceController : MonoBehaviour, IDamageable
             Die();
         }
     }
-    
-    public void Heal(float amount)
+
+    private void Heal(float amount)
     {
         _statHandler.health.Apply(amount);
-        OnTakeDamage?.Invoke();
+        
+        if(amount < 0f)
+             OnTakeDamage?.Invoke();
     }
-    
-    public void Eat(float amount)
+
+    private void Eat(float amount)
     { 
-        _statHandler.health.Apply(amount);
+        _statHandler.hunger.Apply(amount);
     }
     
     private void Die()

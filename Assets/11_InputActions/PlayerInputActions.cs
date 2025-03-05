@@ -82,15 +82,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Inventory"",
-                    ""type"": ""Button"",
-                    ""id"": ""b87e6469-0c26-4302-a2ba-11899f5d4231"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Interaction"",
                     ""type"": ""Button"",
                     ""id"": ""c74d5509-4ece-4d7c-9ea1-d88bb729d005"",
@@ -208,17 +199,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Attack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d4937ecb-05c0-4cc6-ab18-c93be0b235ba"",
-                    ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -750,6 +730,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Shorcut"",
+            ""id"": ""6ce1f8ae-ecd9-44bf-aaaf-a5bbd31772b6"",
+            ""actions"": [
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""792deb1c-b64c-4802-8070-c5a3cfd0e69b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""0fd5642e-3948-4086-a090-95dfd9561ada"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -762,7 +770,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
-        m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
         m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
@@ -776,6 +783,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Shorcut
+        m_Shorcut = asset.FindActionMap("Shorcut", throwIfNotFound: true);
+        m_Shorcut_Inventory = m_Shorcut.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -843,7 +853,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Attack;
-    private readonly InputAction m_Player_Inventory;
     private readonly InputAction m_Player_Interaction;
     public struct PlayerActions
     {
@@ -855,7 +864,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
-        public InputAction @Inventory => m_Wrapper.m_Player_Inventory;
         public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
@@ -884,9 +892,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
-            @Inventory.started += instance.OnInventory;
-            @Inventory.performed += instance.OnInventory;
-            @Inventory.canceled += instance.OnInventory;
             @Interaction.started += instance.OnInteraction;
             @Interaction.performed += instance.OnInteraction;
             @Interaction.canceled += instance.OnInteraction;
@@ -912,9 +917,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
-            @Inventory.started -= instance.OnInventory;
-            @Inventory.performed -= instance.OnInventory;
-            @Inventory.canceled -= instance.OnInventory;
             @Interaction.started -= instance.OnInteraction;
             @Interaction.performed -= instance.OnInteraction;
             @Interaction.canceled -= instance.OnInteraction;
@@ -1053,6 +1055,52 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // Shorcut
+    private readonly InputActionMap m_Shorcut;
+    private List<IShorcutActions> m_ShorcutActionsCallbackInterfaces = new List<IShorcutActions>();
+    private readonly InputAction m_Shorcut_Inventory;
+    public struct ShorcutActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public ShorcutActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Inventory => m_Wrapper.m_Shorcut_Inventory;
+        public InputActionMap Get() { return m_Wrapper.m_Shorcut; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ShorcutActions set) { return set.Get(); }
+        public void AddCallbacks(IShorcutActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ShorcutActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ShorcutActionsCallbackInterfaces.Add(instance);
+            @Inventory.started += instance.OnInventory;
+            @Inventory.performed += instance.OnInventory;
+            @Inventory.canceled += instance.OnInventory;
+        }
+
+        private void UnregisterCallbacks(IShorcutActions instance)
+        {
+            @Inventory.started -= instance.OnInventory;
+            @Inventory.performed -= instance.OnInventory;
+            @Inventory.canceled -= instance.OnInventory;
+        }
+
+        public void RemoveCallbacks(IShorcutActions instance)
+        {
+            if (m_Wrapper.m_ShorcutActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IShorcutActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ShorcutActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ShorcutActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public ShorcutActions @Shorcut => new ShorcutActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1061,7 +1109,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnDash(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnInventory(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
     }
     public interface IUIActions
@@ -1076,5 +1123,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnRightClick(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    public interface IShorcutActions
+    {
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

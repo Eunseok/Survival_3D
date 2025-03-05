@@ -9,8 +9,7 @@ public class Player : MonoBehaviour
     public PlayerMovement playerMovement;
     public ResourceController resourceController;
     public StatHandler statHandler;
-    
-    public ItemData itemData;
+
     public Action<ItemData> AddItem;
     private void Awake()
     {
