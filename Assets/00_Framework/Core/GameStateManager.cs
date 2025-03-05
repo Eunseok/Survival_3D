@@ -1,5 +1,7 @@
 using System;
+using _01_Scripts.UI;
 using Framework.Utilities;
+using Scripts.UI;
 using UnityEngine;
 
 namespace Framework.Core
@@ -11,19 +13,16 @@ namespace Framework.Core
     {
         public enum GameState
         {
-            MainMenu,
-            Playing,
-            Paused,
-            GameOver
+            Gameplay,
         }
 
         [Header("Game State")] [SerializeField]
-        private GameState currentState = GameState.MainMenu;
+        private GameState currentState = GameState.Gameplay;
 
         /// <summary>
         /// 게임 상태 변경 이벤트. 외부에서 구독 가능합니다.
         /// </summary>
-        public event Action<GameState> OnGameStateChanged;
+        public event Action OnGameStateChanged;
 
         /// <summary>
         /// 현재 게임 상태를 제공.
@@ -38,6 +37,12 @@ namespace Framework.Core
             Debug.Log("GameStateManager Initialized");
         }
 
+        private void Start()
+        {
+            UIManager.Instance.ShowHud<HUDGame>();
+            //LoadSceneByGameState(currentState);
+        }
+
         /// <summary>
         /// 게임 상태를 변경합니다.
         /// </summary>
@@ -47,18 +52,29 @@ namespace Framework.Core
             if (currentState == newState) return;
 
             currentState = newState;
-            InvokeGameStateChangeEvent(currentState);
+            LoadSceneByGameState(currentState);
         }
-
-        /// <summary>
-        /// 게임 상태 변경 이벤트를 호출합니다.
-        /// </summary>
-        /// <param name="state">변경된 상태</param>
-        private void InvokeGameStateChangeEvent(GameState state)
+        
+        public void LoadSceneByGameState(GameState state)
         {
-            Debug.Log($"Game State Changed to: {state}");
-            OnGameStateChanged?.Invoke(state); // 구독된 이벤트 호출
+            string sceneName;
+
+            switch (state)
+            {
+                case GameState.Gameplay:
+                    sceneName = "SampleScene"; // 메인 메뉴 씬 이름
+                    UIManager.Instance.ShowHud<HUDGame>();
+                    break;
+                default:
+                    Debug.LogWarning("Unhandled GameState!"); 
+                    return;
+            }
+
+            // 씬 로드
+            Debug.Log($"Loading Scene: {sceneName}");
+            SceneLoader.Instance.LoadScene(sceneName, OnGameStateChanged);
         }
+        
 
         /// <summary>
         /// 게임 종료 처리 (필요 시 확장 가능).

@@ -50,8 +50,7 @@ namespace Framework.Utilities
 
         private static T CreateSingletonInstance()
         {
-            const string singletonObjectName = nameof(T);
-            var singletonObject = new GameObject(singletonObjectName);
+            var singletonObject = new GameObject(typeof(T).Name);
             var instance = singletonObject.AddComponent<T>();
 
             if (IsDontDestroyOnLoad)

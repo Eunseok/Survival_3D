@@ -2,6 +2,7 @@ using System;
 using Scripts.Characters;
 using Scripts.Items;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class Player : MonoBehaviour
     public StatHandler statHandler;
     
     public ItemData itemData;
-    public Action AddItem;
+    public Action<ItemData> AddItem;
     private void Awake()
     {
         CharacterManager.Instance.Player = this;

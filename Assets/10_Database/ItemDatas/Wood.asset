@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b39d8afedad148a495f502d06e3c501, type: 3}
+  m_Script: {fileID: 11500000, guid: dc33ccb79cd746d1993466fc5bc260c4, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
-  displayName: "\uB098\uBB34"
-  description: "\uB098\uBB34\uC785\uB2C8\uB2E4."
-  type: 0
+  itemName: "\uB098\uBB34"
+  itemDescription: "\uB098\uBB34\uC785\uB2C8\uB2F9"
   icon: {fileID: 21300000, guid: a5612e17f7779374da8564e7a11d823c, type: 3}
   dropPrefab: {fileID: 4257660008469254345, guid: 1f477f1e9c2c54dc9a31e7b366e8eb27, type: 3}
-  canStack: 1
-  maxStackAmount: 12
-  consumables: []
+  maxStackAmount: 100

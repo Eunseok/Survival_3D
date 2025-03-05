@@ -1,68 +1,79 @@
+using _01_Scripts.UI;
 using Scripts.Items;
+using Scripts.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Interaction : MonoBehaviour
 {
     public float checkRate = 0.05f;
-    private float _lastCheckTime;
     public float maxCheckDistance;
     public LayerMask layerMask;
-
-    public GameObject curInteractGameObject;
-    private IInteractable _curInteractable;
-
     public TextMeshProUGUI promptText;
+
+    private float _lastCheckTime;
+    private GameObject _currentInteractableObject;
+    private IInteractable _currentInteractable;
     private Camera _mainCamera;
 
     void Start()
     {
         _mainCamera = Camera.main;
         InputManager.Instance.OnInteractionPressed += OnInteractPressed;
+        promptText = UIManager.Instance.HudUI.GetText((int)HUDGame.HudType.PromptText);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Time.time - _lastCheckTime > checkRate)
         {
             _lastCheckTime = Time.time;
-
-            Ray ray = _mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, maxCheckDistance, layerMask))
-            {
-                if (hit.collider.gameObject != curInteractGameObject)
-                {
-                    curInteractGameObject = hit.collider.gameObject;
-                    _curInteractable = hit.collider.GetComponent<IInteractable>();
-                    SetPromptText();
-                }
-            }
-            else
-            {
-                curInteractGameObject = null;
-                _curInteractable = null;
-                promptText.gameObject.SetActive(false);
-            }
+            CheckForInteractableObject();
         }
     }
 
-    private void SetPromptText()
+    private void CheckForInteractableObject()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = _curInteractable.GetInteractPrompt();
+        Vector3 screenCenterPoint = new Vector3(Screen.width / 2f, Screen.height / 2f);
+        Ray ray = _mainCamera.ScreenPointToRay(screenCenterPoint);
+
+        if (Physics.Raycast(ray, out var hit, maxCheckDistance, layerMask))
+        {
+            if (hit.collider.gameObject != _currentInteractableObject)
+            {
+                _currentInteractableObject = hit.collider.gameObject;
+                _currentInteractable = hit.collider.GetComponent<IInteractable>();
+                UpdatePromptText();
+            }
+        }
+        else
+        {
+            ClearInteractionData();
+        }
     }
 
-    public void OnInteractPressed()
+    private void UpdatePromptText()
     {
-        if (_curInteractable == null) return;
+        if (_currentInteractable != null && promptText != null)
+        {
+            promptText.gameObject.SetActive(true);
+            promptText.text = _currentInteractable.GetInteractPrompt();
+        }
+    }
 
-        _curInteractable.OnInteract();
-        curInteractGameObject = null;
-        _curInteractable = null;
-        promptText.gameObject.SetActive(false);
+    private void ClearInteractionData()
+    {
+        _currentInteractableObject = null;
+        _currentInteractable = null;
+        if (promptText != null)
+            promptText.gameObject.SetActive(false);
+    }
+
+    private void OnInteractPressed()
+    {
+        if (_currentInteractable == null) return;
+
+        _currentInteractable.OnInteract();
+        ClearInteractionData();
     }
 }

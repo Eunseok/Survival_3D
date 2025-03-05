@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b39d8afedad148a495f502d06e3c501, type: 3}
+  m_Script: {fileID: 11500000, guid: c75084c817704caabfcdbb0b16b86f66, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
-  displayName: "\uAC80"
-  description: "\uAC80\uC785\uB2C8\uB2E4\uB78C\uC950"
-  type: 1
+  itemName: "\uAC80"
+  itemDescription: "\uC9F1\uC9F1\uC388 \uAC80"
   icon: {fileID: 21300000, guid: 4f2f320a217307a48a107491b1d17ebb, type: 3}
   dropPrefab: {fileID: 47942480704240089, guid: 23ac6d6a040d444ff991d1fe97ca6202, type: 3}
-  canStack: 0
-  maxStackAmount: 0
-  consumables: []

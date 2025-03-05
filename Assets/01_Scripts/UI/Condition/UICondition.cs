@@ -1,11 +1,9 @@
-using Scripts.UI.Condition;
-using Framework.UI.Scripts;
 using Scripts.Characters;
 using UnityEngine;
 
 namespace Scripts.UI.Condition
 {
-    public class UICondition : BaseUI
+    public class UICondition : MonoBehaviour
     {
         [SerializeField]private UIConditionBar healthBar;
         [SerializeField]private UIConditionBar hungerBar;
