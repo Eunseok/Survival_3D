@@ -4,18 +4,18 @@ using UnityEngine.UI;
 using System.Linq;
 
 // UseItemData에 대한 전략 구현
-public class UseItemStrategy : IItemTypeStrategy
+public class UseItemStrategyUI : IItemTypeStrategyUI
 {
-    public string GetButtonText(ItemSlot selectedItem)
+    public string GetButtonText(ItemData selectedItem)
     {
         return "사용";
     }
 
-    public void ConfigureButtonAction(Button useButton, ItemSlot selectedItem)
+    public void ConfigureButtonAction(Button useButton, ItemData selectedItem)
     {
         useButton.onClick.AddListener(() =>
         {
-            var useItemData = selectedItem.item as UseItemData;
+            var useItemData = selectedItem as UseItemData;
             if (useItemData != null)
                 foreach (var effect in useItemData.Consumables)
                 {

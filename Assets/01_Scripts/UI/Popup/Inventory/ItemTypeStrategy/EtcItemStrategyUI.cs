@@ -4,11 +4,11 @@ using Scripts.Items;
 using TMPro;
 using UnityEngine.UI;
 
-public class EtcItemStrategy : IItemTypeStrategy
+public class EtcItemStrategyUI : IItemTypeStrategyUI
 {
-    public string GetButtonText(ItemSlot selectedItem) => string.Empty;
+    public string GetButtonText(ItemData selectedItem) => string.Empty;
 
-    public void ConfigureButtonAction(Button useButton, ItemSlot selectedItem)
+    public void ConfigureButtonAction(Button useButton, ItemData selectedItem)
     {
     }
 
