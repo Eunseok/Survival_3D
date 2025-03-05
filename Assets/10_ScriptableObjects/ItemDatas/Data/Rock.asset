@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc33ccb79cd746d1993466fc5bc260c4, type: 3}
+  m_Script: {fileID: 11500000, guid: b395bd1272ed840f9a4affc38a07fa4f, type: 3}
   m_Name: Rock
   m_EditorClassIdentifier: 
   itemName: "\uB3CC"
-  itemDescription: "\uADF8\uB0E5 \uB3CC\uC785\uB2C8\uB2E4."
+  itemDescription: "\uB3CC\uC785\uB2C8\uB2E4."
   icon: {fileID: 21300000, guid: e61976ceaf6919c47853f5a7ea09288b, type: 3}
   dropPrefab: {fileID: 869149486580268277, guid: e89717988c4694f84a28fc1aaccb53eb, type: 3}
-  maxStackAmount: 100
+  maxStackAmount: 3

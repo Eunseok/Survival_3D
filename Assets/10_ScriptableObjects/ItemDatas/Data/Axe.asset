@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75084c817704caabfcdbb0b16b86f66, type: 3}
-  m_Name: Ax
+  m_Script: {fileID: 11500000, guid: 34ac501f85b8e4191861cc7b5eb377dd, type: 3}
+  m_Name: Axe
   m_EditorClassIdentifier: 
   itemName: "\uB3C4\uB07C"
-  itemDescription: "\uB3C4\uB07C\uB3C4\uB07C\uB3C4\uB07C\uB07C"
+  itemDescription: "\uB098\uBB34\uBCA8\uB54C\uC4F0\uC138\uC694."
   icon: {fileID: 21300000, guid: 06e8d836c76eb494db7ab3784ffcb0eb, type: 3}
   dropPrefab: {fileID: 7349473475792800133, guid: 4fa8f48153de04b9583a107db99f79fb, type: 3}
+  isEquipped: 0
+  equipPrefab: {fileID: 200869425082123393, guid: 08f923c982041450b89f8a1c47cccdff, type: 3}

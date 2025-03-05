@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75084c817704caabfcdbb0b16b86f66, type: 3}
+  m_Script: {fileID: 11500000, guid: 34ac501f85b8e4191861cc7b5eb377dd, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
   itemName: "\uAC80"
-  itemDescription: "\uC9F1\uC9F1\uC388 \uAC80"
+  itemDescription: "\uC9F1\uC9F1\uC388\uAC80"
   icon: {fileID: 21300000, guid: 4f2f320a217307a48a107491b1d17ebb, type: 3}
   dropPrefab: {fileID: 47942480704240089, guid: 23ac6d6a040d444ff991d1fe97ca6202, type: 3}
+  isEquipped: 0
+  equipPrefab: {fileID: 1087448088705902049, guid: ca738ce61c5f5450d8c257efc74a86c7, type: 3}
