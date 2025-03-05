@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Scripts.Characters;
 using Scripts.Items;
 using TMPro;
@@ -5,246 +6,254 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class UIInventory : MonoBehaviour
+public class UIInventory : UIBase
 {
-    public ItemSlot[] slots;
-    public GameObject inventoryWindow;
-    public Transform slotPanel;
+    [Header("UI References")] public List<ItemSlot> slots; // 인벤토리에 포함된 모든 슬롯 리스트
+    public GameObject slotPrefab; // 슬롯 프리팹
     public Transform dropPosition;
 
-    [Header("Selected Item")] 
-    private ItemSlot selectedItem;
-    private int selectedItemIndex;
-    public TextMeshProUGUI selectedItemName;
-    public TextMeshProUGUI selectedItemDescription;
-    public TextMeshProUGUI selectedItemStatName;
-    public TextMeshProUGUI selectedItemStatValue;
-    public Button useButton;
-    public Button dropButton;
+    private int _selectedIndex = -1; // 현재 선택된 슬롯 인덱스 (-1은 선택되지 않음)
+    private readonly int _slotCount = 14; // 기본 슬롯 개수
+
+    enum GameObjects
+    {
+        SlotContainer,
+        InventoryWindow
+    }
+
+    enum Texts
+    {
+        SelectedItemName,
+        SelectedItemDescription,
+        SelectedItemStatName,
+        SelectedItemStatValue,
+        UseButton,
+        //DropButton
+    }
+
+    enum Buttons
+    {
+        UseButton,
+        DropButton
+    }
 
     private void Start()
     {
+        AutoBind<GameObject>(typeof(GameObjects));
+        AutoBind<TextMeshProUGUI>(typeof(Texts));
+        AutoBind<Button>(typeof(Buttons));
+
+        InitializeInventory(_slotCount);
         InputManager.Instance.OnInventoryPressed += Toggle;
         CharacterManager.Instance.Player.AddItem += AddItem;
-        
-        // Inventory UI 초기화 로직들
-        inventoryWindow.SetActive(false);
-        slots = new ItemSlot[slotPanel.childCount];
+        GetObject((int)GameObjects.InventoryWindow).SetActive(false);
+    }
 
-        for(int i = 0; i < slots.Length; i++)
+    private void Toggle()
+    {
+        GetObject((int)GameObjects.InventoryWindow).SetActive(!IsOpen());
+    }
+
+    private bool IsOpen()
+    {
+        return GetObject((int)GameObjects.InventoryWindow).activeInHierarchy;
+    }
+
+    /// <summary>
+    /// 초기화 시 슬롯 생성 및 세팅
+    /// </summary>
+    private void InitializeInventory(int slotCount)
+    {
+        // 기존 슬롯 정리
+        foreach (Transform child in GetObject((int)GameObjects.SlotContainer).transform)
+            Destroy(child.gameObject);
+
+        slots.Clear();
+
+        // 새로운 슬롯 생성 및 추가
+        for (int i = 0; i < slotCount; i++)
         {
-            slots[i] = slotPanel.GetChild(i).GetComponent<ItemSlot>();
-            slots[i].index = i;
-            slots[i].inventory = this;
-            slots[i].Clear();
+            var slotGo = Instantiate(slotPrefab, GetObject((int)GameObjects.SlotContainer).transform);
+            var itemSlot = slotGo.GetComponent<ItemSlot>();
+            itemSlot.Set(null, 0, this, i); // 아이템 없는 빈 슬롯으로 초기화
+            slots.Add(itemSlot);
         }
 
         ClearSelectedItemWindow();
     }
 
-    public void Toggle()
+    /// <summary>
+    /// 특정 슬롯에 아이템 추가 또는 수정
+    /// </summary>
+    public void AddOrUpdateItem(int slotIndex, ItemData newItem, float quantity)
     {
-        if (IsOpen())
-        {
-            inventoryWindow.SetActive(false);
-        }
-        else
-        {
-            inventoryWindow.SetActive(true);
-        }
+        if (slotIndex >= 0 && slotIndex < slots.Count)
+            slots[slotIndex].Set(newItem, quantity, this, slotIndex);
     }
 
-    public bool IsOpen()
+    private void AddItem(ItemData data)
     {
-        return inventoryWindow.activeInHierarchy;
-    }
-
-    public void AddItem(ItemData data)
-    {
-        // 여러개 가질 수 있는 아이템이라면
+        // 스택 가능한 아이템이라면
         if (data is IStackable stackable)
         {
-            ItemSlot slot = GetItemStack(stackable);
-            if(slot != null)
+            var slot = GetItemStack(stackable);
+            if (slot != null)
             {
-                slot.quantity++;
-                UpdateSlots();
+                slot.AddStackItem();
                 return;
             }
         }
-        
+
         // 빈 슬롯 찾기
-        ItemSlot emptySlot = GetEmptySlot();
-        
-        // 빈 슬롯이 있다면
-        if(emptySlot != null)
+        var emptySlot = GetEmptySlot();
+        if (emptySlot != null)
         {
-            emptySlot.item = data;
-            emptySlot.quantity = 1;
-            UpdateSlots();
+            emptySlot.AddNewItem(data, 1);
             return;
         }
-        
+
         // 빈 슬롯 마저 없을 때
-         ThrowItem(data);
+        ThrowItem(data);
     }
-    
-    // 여러개 가질 수 있는 아이템의 정보 찾아서 return
-    ItemSlot GetItemStack(IStackable data)
+
+    /// <summary>
+    /// 스택 가능한 아이템 슬롯을 찾음
+    /// </summary>
+    private ItemSlot GetItemStack(IStackable data)
     {
         foreach (var slot in slots)
         {
-            if (slot.item == (ItemData)data && slot.quantity < data.MaxStackAmount)
-            {
+            if (slot.item == (ItemData)data && slot.CanStack)
                 return slot;
-            }
         }
 
         return null;
     }
-    
-    // 슬롯의 item 정보가 비어있는 정보 return
-    ItemSlot GetEmptySlot()
+
+    /// <summary>
+    /// 빈 슬롯을 찾음
+    /// </summary>
+    private ItemSlot GetEmptySlot()
     {
         foreach (var slot in slots)
         {
             if (slot.item == null)
-            {
                 return slot;
-            }
         }
 
         return null;
     }
-    
-    // 아이템 버리기 (실제론 매개변수로 들어온 데이터에 해당하는 아이템 생성)
-    public void ThrowItem(ItemData data)
+
+    /// <summary>
+    /// 아이템 삭제 (버림)
+    /// </summary>
+    private void ThrowItem(ItemData data)
     {
-        if(data == null) return;
+        if (data == null) return;
         Instantiate(data.DropPrefab, dropPosition.position, Quaternion.Euler(Vector3.one * Random.value * 360));
     }
-    
-    void ClearSelectedItemWindow()
+
+    /// <summary>
+    /// 특정 슬롯의 아이템 제거
+    /// </summary>
+    public void RemoveItem(int slotIndex)
     {
-        selectedItem = null;
-
-        selectedItemName.text = string.Empty;
-        selectedItemDescription.text = string.Empty;
-        selectedItemStatName.text = string.Empty;
-        selectedItemStatValue.text = string.Empty;
-
-        useButton.gameObject.SetActive(false);
-        dropButton.gameObject.SetActive(false);
+        if (slotIndex >= 0 && slotIndex < slots.Count)
+            slots[slotIndex].ClearUI();
     }
-    
-    void RemoveSelctedItem()
+
+    /// <summary>
+    /// 특정 슬롯을 선택
+    /// </summary>
+    public void SelectItem(int slotIndex)
     {
-        selectedItem.quantity--;
-
-        if(selectedItem.quantity <= 0)
+        if (slotIndex >= 0 && slotIndex < slots.Count)
         {
-            if (slots[selectedItemIndex].equipped)
-            {
-               // UnEquip(selectedItemIndex);
-            }
+            // 이전 선택된 슬롯 비활성화
+            if (_selectedIndex >= 0 && _selectedIndex < slots.Count)
+                slots[_selectedIndex].UpdateEquippedStatus(false);
 
-            selectedItem.item = null;
+            // 새로운 슬롯 선택
+            _selectedIndex = slotIndex;
+            slots[slotIndex].UpdateEquippedStatus(true);
+            UpdateSelectedItemUI(slots[slotIndex]); // 선택된 아이템 관련 UI 업데이트
+        }
+    }
+
+    /// <summary>
+    /// 선택된 아이템 관련 UI 업데이트
+    /// </summary>
+    public void UpdateSelectedItemUI(ItemSlot selectedItem)
+    {
+        if (!selectedItem.item)
+        {
             ClearSelectedItemWindow();
+            return;
         }
 
-        UpdateUI();
-    }
-    
-    public void SelectItem(int index)
-    {
-        if (slots[index].item == null) return;
-
-        SetSelectedItem(index);
-        UpdateUI();
-    }
-
-    private void SetSelectedItem(int index)
-    {
-        selectedItem = slots[index];
-        selectedItemIndex = index;
-    }
-
-    private void UpdateUI()
-    {
-        UpdateSlots();     // 슬롯 관련 UI 업데이트
-        UpdateSelectedItemUI(); // 선택된 아이템 관련 UI 업데이트
-    }
-
-    private void UpdateSlots()
-    {
-        foreach (var slot in slots)
-        {
-            if (slot.item != null)
-            {
-                slot.Set(); // 슬롯에 아이템이 있다면 세팅
-            }
-            else
-            {
-                slot.Clear(); // 슬롯에 아이템이 없다면 초기화
-            }
-        }
-    }
-
-    private void UpdateSelectedItemUI()
-    {
-        if (!selectedItem) return;
-
-        var item = selectedItem.item;
-
-        // 전략 가져오기
-        var strategy = GetStrategy(item);
+        var strategy = GetStrategy(selectedItem.item); // 전략 패턴 가져오기
 
         // 선택된 아이템의 정보를 UI에 반영
-        selectedItemName.text = item.ItemName;
-        selectedItemDescription.text = item.ItemDescription;
-        strategy.UpdateStats(selectedItemStatName, selectedItemStatValue, item);
+
+        GetText((int)Texts.SelectedItemName).text = selectedItem.item.ItemName;
+        GetText((int)Texts.SelectedItemDescription).text = selectedItem.item.ItemDescription;
+        strategy.UpdateStats(GetText((int)Texts.SelectedItemStatName)
+            , GetText((int)Texts.SelectedItemStatValue), selectedItem.item);
 
         // 버튼 관련 UI 업데이트
-        UpdateButtons(strategy);
+        UpdateButtons(strategy, selectedItem);
     }
 
-    private void UpdateButtons(IItemTypeStrategy strategy)
+    private void UpdateButtons(IItemTypeStrategy strategy, ItemSlot selectedItem)
     {
-        ConfigureUseButton(strategy);
+        ConfigureUseButton(strategy, selectedItem);
         ConfigureDropButton();
     }
 
-    private void ConfigureUseButton(IItemTypeStrategy strategy)
+    private void ConfigureUseButton(IItemTypeStrategy strategy, ItemSlot selectedItem)
     {
+        Button useButton = GetButton((int)Buttons.UseButton);
+
         string buttonText = strategy.GetButtonText(selectedItem);
         UpdateButtonUI(useButton, buttonText);
-        
+
         useButton.onClick.RemoveAllListeners();
         strategy.ConfigureButtonAction(useButton, selectedItem);
-        useButton.onClick.AddListener(RemoveSelctedItem);
+        useButton.onClick.AddListener(RemoveSelectedItem);
     }
 
     private void ConfigureDropButton()
     {
+        Button dropButton = GetButton((int)Buttons.DropButton);
+
         dropButton.gameObject.SetActive(true); // 기본 활성화
-        
-        dropButton.onClick.RemoveListener(OnDropButton);
-        dropButton.onClick.AddListener(OnDropButton); // 버리기말고 다른버튼 생길까봐
+
+        dropButton.onClick.RemoveAllListeners();
+        dropButton.onClick.AddListener(OnDropButton); // "버리기" 버튼 설정
     }
 
-    public void OnDropButton()
-    {
-        ThrowItem(selectedItem.item);
-        RemoveSelctedItem();
-    }
-    
     private void UpdateButtonUI(Button button, string text)
     {
         button.GetComponentInChildren<TextMeshProUGUI>().text = text;
         button.gameObject.SetActive(!string.IsNullOrEmpty(text));
     }
 
-    
+    private void ClearSelectedItemWindow()
+    {
+        GetText((int)Texts.SelectedItemName).text = string.Empty;
+        GetText((int)Texts.SelectedItemDescription).text = string.Empty;
+        GetText((int)Texts.SelectedItemStatName).text = string.Empty;
+        GetText((int)Texts.SelectedItemStatValue).text = string.Empty;
+
+        GetButton((int)Buttons.UseButton).gameObject.SetActive(false);
+        GetButton((int)Buttons.DropButton).gameObject.SetActive(false);
+    }
+
+    private void RemoveSelectedItem()
+    {
+        slots[_selectedIndex].RemoveSelectedItem();
+    }
+
     private IItemTypeStrategy GetStrategy(ItemData item)
     {
         return item switch
@@ -253,5 +262,23 @@ public class UIInventory : MonoBehaviour
             EquipItemData => new EquipItemStrategy(),
             _ => new EtcItemStrategy()
         };
+    }
+
+    /// <summary>
+    /// "버리기" 버튼 클릭 이벤트
+    /// </summary>
+    private void OnDropButton()
+    {
+        ThrowItem(slots[_selectedIndex].item);
+        RemoveSelectedItem();
+    }
+
+    /// <summary>
+    /// 모든 슬롯 초기화
+    /// </summary>
+    public void ClearAllSlots()
+    {
+        foreach (var slot in slots)
+            slot.ClearUI();
     }
 }

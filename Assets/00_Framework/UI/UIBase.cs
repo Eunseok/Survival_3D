@@ -39,10 +39,10 @@ public abstract class UIBase : MonoBehaviour
     }
 
     public GameObject GetObject(int index) => Get<GameObject>(index);
-    public TextMeshProUGUI GetText(int index) => Get<GameObject>(index).GetComponent<TextMeshProUGUI>();
-    public Button GetButton(int index) => Get<GameObject>(index).GetComponent<Button>();
-    public Image GetImage(int index) => Get<GameObject>(index).GetComponent<Image>();
-    // protected TextMeshProUGUI GetText(int index) => Get<TextMeshProUGUI>(index);
-    // protected Button GetButton(int index) => Get<Button>(index);
-    // protected Image GetImage(int index) => Get<Image>(index);
+    public TextMeshProUGUI GetTextFromGameObject(int index) => Get<GameObject>(index).GetComponent<TextMeshProUGUI>();
+    public Button GetButtonFromGameObject(int index) => Get<GameObject>(index).GetComponent<Button>();
+    public Image GetImageFromGameObject(int index) => Get<GameObject>(index).GetComponent<Image>();
+    protected TextMeshProUGUI GetText(int index) => Get<TextMeshProUGUI>(index);
+    protected Button GetButton(int index) => Get<Button>(index);
+    protected Image GetImage(int index) => Get<Image>(index);
 }

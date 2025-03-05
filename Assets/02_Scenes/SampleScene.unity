@@ -239,15 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slots: []
-  inventoryWindow: {fileID: 692538687}
-  slotPanel: {fileID: 1319456322}
-  dropPosition: {fileID: 1140161533}
-  selectedItemName: {fileID: 625556536}
-  selectedItemDescription: {fileID: 582530999}
-  selectedItemStatName: {fileID: 873620456}
-  selectedItemStatValue: {fileID: 1152456551}
-  useButton: {fileID: 1601900975}
-  dropButton: {fileID: 1758096108}
+  slotPrefab: {fileID: 6060057800327008455, guid: db4afcb9aa96646c9bc5291ede6e7948, type: 3}
+  dropPosition: {fileID: 2103458055}
 --- !u!1001 &144767210
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -923,7 +916,7 @@ GameObject:
   - component: {fileID: 582531000}
   - component: {fileID: 582530999}
   m_Layer: 5
-  m_Name: ItemDescription
+  m_Name: SelectedItemDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1159,7 +1152,7 @@ GameObject:
   - component: {fileID: 625556537}
   - component: {fileID: 625556536}
   m_Layer: 5
-  m_Name: ItemName
+  m_Name: SelectedItemName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1293,7 +1286,7 @@ GameObject:
   - component: {fileID: 692538690}
   - component: {fileID: 692538689}
   m_Layer: 5
-  m_Name: BG
+  m_Name: InventoryWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1867,7 +1860,7 @@ GameObject:
   - component: {fileID: 873620457}
   - component: {fileID: 873620456}
   m_Layer: 5
-  m_Name: StatName
+  m_Name: SelectedItemStatName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2739,6 +2732,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2103458055}
+  - {fileID: 1877694528}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 121.108, z: 0}
 --- !u!114 &1140161534
@@ -2840,7 +2834,7 @@ GameObject:
   - component: {fileID: 1152456552}
   - component: {fileID: 1152456551}
   m_Layer: 5
-  m_Name: StatValue
+  m_Name: SelectedItemStatValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3077,7 +3071,7 @@ GameObject:
   - component: {fileID: 1319456322}
   - component: {fileID: 1319456323}
   m_Layer: 5
-  m_Name: Slots
+  m_Name: SlotContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4014,6 +4008,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770982853}
   m_CullTransparentMesh: 1
+--- !u!1 &1877694527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1877694528}
+  m_Layer: 6
+  m_Name: DropPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1877694528
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877694527}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.296, z: 0.612}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1140161533}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1999857941
 PrefabInstance:
   m_ObjectHideFlags: 0

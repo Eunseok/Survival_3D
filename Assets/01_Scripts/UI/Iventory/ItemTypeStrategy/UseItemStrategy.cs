@@ -1,6 +1,5 @@
 using Scripts.Items;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 

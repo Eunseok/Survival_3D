@@ -9,7 +9,7 @@ public class EquipItemStrategy : IItemTypeStrategy
 {
     public string GetButtonText(ItemSlot selectedItem)
     {
-        return selectedItem.equipped ? "장착해제" : "장착";
+        return selectedItem.IsEquipped ? "장착해제" : "장착";
     }
 
     public void ConfigureButtonAction(Button useButton, ItemSlot selectedItem)

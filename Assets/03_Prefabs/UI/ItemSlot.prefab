@@ -298,13 +298,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  inventory: {fileID: 0}
   index: 0
-  equipped: 0
   icon: {fileID: 9112848624966101523}
-  quatityText: {fileID: 8961782217193759768}
+  quantityText: {fileID: 8961782217193759768}
   outline: {fileID: 6836362768875305843}
-  quantity: 0
 --- !u!1 &8071483787290331629
 GameObject:
   m_ObjectHideFlags: 0

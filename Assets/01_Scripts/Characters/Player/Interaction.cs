@@ -20,7 +20,7 @@ public class Interaction : MonoBehaviour
     {
         _mainCamera = Camera.main;
         InputManager.Instance.OnInteractionPressed += OnInteractPressed;
-        promptText = UIManager.Instance.HudUI.GetText((int)HUDGame.HudType.PromptText);
+        promptText = UIManager.Instance.HudUI.GetTextFromGameObject((int)HUDGame.HudType.PromptText);
     }
 
     void Update()
