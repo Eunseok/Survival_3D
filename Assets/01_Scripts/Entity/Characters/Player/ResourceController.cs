@@ -18,6 +18,7 @@ public class ResourceController : MonoBehaviour, IDamageable
         
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHeal", Heal);
         SignalManager.Instance.ConnectSignal<float>("OnPlayerEat", Eat);
+        SignalManager.Instance.ConnectSignal<float, bool>("CanAttack", UseStamina);
     }
 
     private void Update()
@@ -47,6 +48,16 @@ public class ResourceController : MonoBehaviour, IDamageable
     private void Eat(float amount)
     { 
         _statHandler.hunger.Apply(amount);
+    }
+
+    private bool UseStamina(float amount)
+    {
+        if(_statHandler.stamina.CurValue - amount < 0)
+        {
+            return false;
+        }
+        _statHandler.stamina.Apply(-amount);
+        return true;
     }
     
     private void Die()

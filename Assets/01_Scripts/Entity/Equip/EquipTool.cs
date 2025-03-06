@@ -6,14 +6,14 @@ public class EquipTool : Equip
     public float attackRate;
     private bool _attacking;
     public float attackDistance;
+    public float useStamina;
 
-    [Header("Resource Gathering")]
-    public bool doesGatherResources;
+    [Header("Resource Gathering")] public bool doesGatherResources;
 
-    [Header("Combat")]
-    public bool doesDealDamage;
+    [Header("Combat")] public bool doesDealDamage;
     public int damage;
-    
+
+
     private Animator _animator;
     private Camera _equipCamera;
 
@@ -27,7 +27,8 @@ public class EquipTool : Equip
     {
         InputManager.Instance.OnAttackPressed += OnAttackInput;
     }
-    private void OnDestroy()
+
+    private void OnDisable()
     {
         if (InputManager.Instance)
             InputManager.Instance.OnAttackPressed -= OnAttackInput;
@@ -35,16 +36,34 @@ public class EquipTool : Equip
 
     public override void OnAttackInput()
     {
-        if (!_attacking)
-        {  
-            _attacking = true;
-            _animator.SetTrigger(Attack);
-            Invoke(nameof(OnCanAttack), attackRate);
-        }
+        if (_attacking) return;
+        bool canAttack = SignalManager.Instance.EmitSignal<float, bool>("CanAttack", useStamina);
+        if (!canAttack) return;
+        _attacking = true;
+        _animator.SetTrigger(Attack);
+        Invoke(nameof(OnCanAttack), attackRate);
     }
 
+    //
+    // if (CharacterManager.Instance.Player.condition.UseStamina(useStamina))
+    // +            {
+    //     +                attacking = true;
+    //     +                animator.SetTrigger("Attack");
+    //     +                Invoke("OnCanAttack", attackRate);
+    //     +            }
     void OnCanAttack()
     {
         _attacking = false;
+    }
+
+    public void OnHit()
+    {
+        var ray = _equipCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
+
+        if (!Physics.Raycast(ray, out var hit, attackDistance)) return;
+        if (doesGatherResources && hit.collider.TryGetComponent(out Resource resource))
+        {
+            resource.Gather(hit.point, hit.normal);
+        }
     }
 }
