@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class EtcItemStrategyUI : IItemTypeStrategyUI
 {
-    public string GetButtonText(ItemData selectedItem) => string.Empty;
+    public string GetButtonText(ItemSlotData slotData) => string.Empty;
 
-    public void ConfigureButtonAction(Button useButton, ItemData selectedItem)
+    public void ConfigureButtonAction(Button useButton, ItemSlotData slotData)
     {
     }
 

@@ -16,5 +16,4 @@ MonoBehaviour:
   itemDescription: "\uB098\uBB34\uBCA8\uB54C\uC4F0\uC138\uC694."
   icon: {fileID: 21300000, guid: 06e8d836c76eb494db7ab3784ffcb0eb, type: 3}
   dropPrefab: {fileID: 7349473475792800133, guid: 4fa8f48153de04b9583a107db99f79fb, type: 3}
-  isEquipped: 0
   equipPrefab: {fileID: 200869425082123393, guid: 08f923c982041450b89f8a1c47cccdff, type: 3}

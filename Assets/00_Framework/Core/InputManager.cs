@@ -1,5 +1,4 @@
 using System;
-using Framework.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,9 +13,10 @@ public class InputManager : Singleton<InputManager>
     public event Action OnInteractionPressed;
     public event Action OnJumpPressed;
     public event Action OnInventoryPressed;
+    public event Action OnAttackPressed;
 
 
-    protected override void InitializeManager()
+    protected  void Awake()
     {
         InitializeInputs();
     }
@@ -30,6 +30,8 @@ public class InputManager : Singleton<InputManager>
         _playerInput.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
         _playerInput.Player.Jump.started += _ => OnJumpPressed?.Invoke();
         _playerInput.Player.Interaction.started += _ => OnInteractionPressed?.Invoke();
+        _playerInput.Player.Attack.started += _ => OnAttackPressed?.Invoke();
+        
         
         _playerInput.Shorcut.Inventory.started += _ =>
         {

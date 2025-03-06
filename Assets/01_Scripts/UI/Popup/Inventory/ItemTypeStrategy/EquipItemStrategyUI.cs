@@ -7,22 +7,19 @@ using UnityEngine.UI;
 
 public class EquipItemStrategyUI : IItemTypeStrategyUI
 {
-    public string GetButtonText(ItemData selectedItem)
+    public string GetButtonText(ItemSlotData slotData)
     {
-        var equipItem = selectedItem as EquipItemData; // selectedItem을 EquipItemData로 형변환
-        if (equipItem == null)
-            return "유효하지 않은 아이템";
-
-        return equipItem.IsEquipped ? "장착해제" : "장착";
-
+        Debug.Log(slotData.IsEquipped);
+        return slotData.IsEquipped ? "장착해제" : "장착";
     }
 
-    public void ConfigureButtonAction(Button useButton, ItemData selectedItem)
+    public void ConfigureButtonAction(Button useButton, ItemSlotData slotData)
     {
         useButton.onClick.RemoveAllListeners();
         useButton.onClick.AddListener(() =>
         {
-            Debug.Log($"Toggling equipment: {selectedItem.ItemName}");
+                SignalManager.Instance.EmitSignal(!slotData.IsEquipped ? "OnPlayerEquip" : "OnPlayerUnEquip",
+                    slotData);
         });
     }
 

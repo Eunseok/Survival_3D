@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Scripts.Items;
 using Scripts.UI;
@@ -37,14 +36,13 @@ public class PopupInventory : UIPopup
     }
     
     /// 초기화 시 슬롯 생성 및 세팅
-    public void Initialize(List<ItemSlotData> slotData, Transform dropPoint, ref Action onInventoryChanged)
+    public void Initialize(List<ItemSlotData> slotData, Transform dropPoint)
     {
         AutoBind<GameObject>(typeof(GameObjects));
         AutoBind<TextMeshProUGUI>(typeof(Texts));
         AutoBind<Button>(typeof(Buttons));
 
         _dropPosition = dropPoint;
-        onInventoryChanged += UpdateUI;
         
         _slotData = slotData;
         
@@ -63,11 +61,21 @@ public class PopupInventory : UIPopup
             var slotGo = Instantiate(slotPrefab, GetObject((int)GameObjects.SlotContainer).transform);
             var itemSlot = slotGo.GetComponent<ItemSlot>();
             itemSlot.Set(_slotData[i], this, i); // 아이템 없는 빈 슬롯으로 초기화
+            _slotData[i].OnItemChanged += UpdateUI; // 이벤트 구독
             _slots.Add(itemSlot);
         }
         
         ClearSelectedItemWindow();
     }
+
+    private void OnDisable()
+    {
+        foreach (var slot in _slotData)
+        {
+            slot.OnItemChanged -= UpdateUI; // 이벤트 해제
+        }
+    }
+
 
     //UI업데이트
     private void UpdateUI()
@@ -157,12 +165,12 @@ public class PopupInventory : UIPopup
     {
         Button useButton = GetButton((int)Buttons.UseButton);
 
-        string buttonText = strategyUI.GetButtonText(selectedItem.Item);
+        string buttonText = strategyUI.GetButtonText(selectedItem);
         UpdateButtonUI(useButton, buttonText);
 
         useButton.onClick.RemoveAllListeners();
-        strategyUI.ConfigureButtonAction(useButton, selectedItem.Item);
-        useButton.onClick.AddListener(RemoveSelectedItem);
+        strategyUI.ConfigureButtonAction(useButton, selectedItem);
+       // useButton.onClick.AddListener(RemoveSelectedItem);
     }
 
     private void ConfigureDropButton()
@@ -205,6 +213,7 @@ public class PopupInventory : UIPopup
     private void OnDropButton()
     {
         ThrowItem(_slotData[_selectedIndex].Item);
+        SignalManager.Instance.EmitSignal("OnPlayerUnEquip", _slotData[_selectedIndex]);
         RemoveSelectedItem();
     }
     

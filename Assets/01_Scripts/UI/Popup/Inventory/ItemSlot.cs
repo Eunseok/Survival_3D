@@ -15,7 +15,7 @@ public class ItemSlot : MonoBehaviour
 
 
     // UI Elements
-    [Header("UI Elements")] public Image icon; // 슬롯의 아이템 아이콘
+    [Header("UI Elements")] [SerializeField]private Image icon; // 슬롯의 아이템 아이콘
     public TextMeshProUGUI quantityText; // 아이템 수량을 표시하는 텍스트
     public Outline outline; // 슬롯이 선택되었을 때 Outlining 처리를 위한 컴포넌트
 
@@ -61,7 +61,7 @@ public class ItemSlot : MonoBehaviour
     /// 슬롯 UI를 비우기
     public void ClearUI()
     {
-       // _itemData.Item = null;
+       _itemData.Item = null;
         icon.gameObject.SetActive(false);
         quantityText.text = string.Empty;
         UpdateSelected(false); // 슬롯 선택 해제

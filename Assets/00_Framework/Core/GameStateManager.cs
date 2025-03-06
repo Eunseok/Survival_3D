@@ -1,6 +1,5 @@
 using System;
 using _01_Scripts.UI;
-using Framework.Utilities;
 using Scripts.UI;
 using UnityEngine;
 
@@ -32,11 +31,6 @@ namespace Framework.Core
         /// <summary>
         /// 초기화 작업.
         /// </summary>
-        protected override void InitializeManager()
-        {
-            Debug.Log("GameStateManager Initialized");
-        }
-
         private void Start()
         {
             UIManager.Instance.ShowHud<HUDGame>();

@@ -1,7 +1,4 @@
-using System;
-using Framework.Utilities;
 using Scripts.UI;
-using TMPro;
 using UnityEngine;
 
 namespace _01_Scripts.UI

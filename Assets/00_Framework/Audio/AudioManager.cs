@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using Framework.Utilities;
 using UnityEngine;
 
 namespace Framework.Audio
@@ -24,7 +24,7 @@ namespace Framework.Audio
 
         [SerializeField] private bool isMuted; // 음소거 설정 여부
 
-        protected override void InitializeManager()
+        private void Awake()
         {
             ApplyVolumeSettings(); // 초기 볼륨 설정
         }

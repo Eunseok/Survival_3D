@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using DefaultNamespace;
-using Framework.Utilities;
 using UnityEngine;
 
 namespace Scripts.UI
@@ -15,11 +14,6 @@ namespace Scripts.UI
         private UIHud _hudUI;
         public UIHud HudUI => _hudUI;
         
-
-        protected override void InitializeManager()
-        {
-            Debug.Log("UIManager Initialized");
-        }
 
         private GameObject Root
         {

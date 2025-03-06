@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Framework.Utilities;
 
 namespace Framework.Core
 {
@@ -28,10 +27,6 @@ namespace Framework.Core
         private const float SceneActivationThreshold = 0.9f; // 씬 활성화 기준값
         public event Action OnSceneLoadedCallback;
         
-        protected override void InitializeManager()
-        {
-        }
-
         /// <summary>
         /// 씬을 이름을 기준으로 비동기로 로드합니다.
         /// </summary>

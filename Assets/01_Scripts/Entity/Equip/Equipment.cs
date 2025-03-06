@@ -1,32 +1,37 @@
 using Scripts.Items;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Equipment : MonoBehaviour
 {
     public Equip curEquip;
     public Transform equipParent;
+    private ItemSlotData _curSlot;
 
 
     private void OnEnable()
     {
-        // SignalManager.Instance.ConnectSignal<EquipItemData>("OnPlayerEquip", EquipNew);
-        // SignalManager.Instance.ConnectSignal("OnPlayerUnEquip", UnEquip);
-        //
+        SignalManager.Instance.ConnectSignal<ItemSlotData>("OnPlayerEquip", EquipNew);
+        SignalManager.Instance.ConnectSignal<ItemSlotData>("OnPlayerUnEquip", UnEquip);
+        
     }
 
-    public void EquipNew(EquipItemData data)
+    private void EquipNew(ItemSlotData data)
     {
-        UnEquip();
-        curEquip = Instantiate(data.equipPrefab, equipParent).GetComponent<Equip>();
+        UnEquip(_curSlot);
+
+        GameObject obj = (data.Item as EquipItemData)?.equipPrefab;
+        curEquip = Instantiate(obj, equipParent).GetComponent<Equip>();
+        data.IsEquipped = true;
+        _curSlot = data;
     }
 
-    public void UnEquip()
+    private void UnEquip(ItemSlotData data)
     {
-        if(curEquip != null)
+        if(curEquip != null && _curSlot == data)
         {
             Destroy(curEquip.gameObject);
             curEquip = null;
+            data.IsEquipped = false;
         }
     }
 }

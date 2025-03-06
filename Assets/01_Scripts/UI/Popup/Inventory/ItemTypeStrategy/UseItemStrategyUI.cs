@@ -1,3 +1,4 @@
+using System.Globalization;
 using Scripts.Items;
 using TMPro;
 using UnityEngine.UI;
@@ -6,16 +7,16 @@ using System.Linq;
 // UseItemData에 대한 전략 구현
 public class UseItemStrategyUI : IItemTypeStrategyUI
 {
-    public string GetButtonText(ItemData selectedItem)
+    public string GetButtonText(ItemSlotData slotData)
     {
         return "사용";
     }
 
-    public void ConfigureButtonAction(Button useButton, ItemData selectedItem)
+    public void ConfigureButtonAction(Button useButton, ItemSlotData slotData)
     {
         useButton.onClick.AddListener(() =>
         {
-            var useItemData = selectedItem as UseItemData;
+            var useItemData = slotData.Item as UseItemData;
             if (useItemData != null)
                 foreach (var effect in useItemData.Consumables)
                 {
@@ -29,6 +30,8 @@ public class UseItemStrategyUI : IItemTypeStrategyUI
                             break;
                     }
                 }
+
+            slotData.RemoveSelectedItem();
         });
     }
 
@@ -37,7 +40,7 @@ public class UseItemStrategyUI : IItemTypeStrategyUI
         if (item is UseItemData useItem)
         {
             statName.text = string.Join("\n", useItem.Consumables.Select(c => c.type.ToString()));
-            statValue.text = string.Join("\n", useItem.Consumables.Select(c => c.value.ToString()));
+            statValue.text = string.Join("\n", useItem.Consumables.Select(c => c.value.ToString(CultureInfo.InvariantCulture)));
         }
     }
 }

@@ -8,14 +8,12 @@ using Random = UnityEngine.Random;
 
 public class InventorySystem : MonoBehaviour
 {
-    private List<ItemSlotData> Slots { get; set; }
+    public List<ItemSlotData> Slots { get; private set; }
 
     [SerializeField] private int slotCount = 14;
     public int SlotCount => Slots.Count;
     public Transform dropPoint;
     private PopupInventory _popupInventory;
-
-    [UsedImplicitly] public Action OnInventoryChanged;
 
     private void Awake()
     {
@@ -27,12 +25,18 @@ public class InventorySystem : MonoBehaviour
         InputManager.Instance.OnInventoryPressed += OnInventoryPressed;
     }
 
+    private void OnDisable()
+    {
+        if (InputManager.Instance)
+            InputManager.Instance.OnInventoryPressed -= OnInventoryPressed;
+    }
+
     private void OnInventoryPressed()
     {
         if (_popupInventory == null)
         {
             _popupInventory = UIManager.Instance.ShowPopup<PopupInventory>();
-            _popupInventory.Initialize(Slots, dropPoint, ref OnInventoryChanged);
+            _popupInventory.Initialize(Slots, dropPoint);
         }
         else
         {
@@ -47,11 +51,10 @@ public class InventorySystem : MonoBehaviour
 
     private void InitializeInventory()
     {
-        Slots = new List<ItemSlotData>(slotCount);
+        Slots = new List<ItemSlotData>();
         for (int i = 0; i < slotCount; i++)
         {
-            ItemSlotData itemSlotData = new ItemSlotData();
-            itemSlotData.OnItemChanged += OnInventoryChanged;
+            var itemSlotData = new ItemSlotData();
             Slots.Add(itemSlotData);
         }
     }
@@ -125,7 +128,20 @@ public class InventorySystem : MonoBehaviour
 // 슬롯 데이터를 독립적으로 관리하는 클래스
 public class ItemSlotData
 {
-    public Action OnItemChanged;
+    public Action OnItemChanged = delegate { };
+
+    private bool _isEquipped;
+
+    public bool IsEquipped
+    {
+        get => _isEquipped;
+        set
+        {
+            if (_isEquipped == value) return;
+            _isEquipped = value;
+            OnItemChanged?.Invoke();
+        }
+    }
 
     private ItemData _item;
 
@@ -150,6 +166,7 @@ public class ItemSlotData
             if (Quantity == value) return;
             _quantity = value;
             OnItemChanged?.Invoke();
+            Debug.Log($"OnItemChanged 상태: {(OnItemChanged == null ? "null" : "구독자 있음")}");
         }
     }
 
@@ -157,6 +174,7 @@ public class ItemSlotData
     {
         Item = null;
         Quantity = 0;
+        IsEquipped = false;
     }
 
     public bool RemoveSelectedItem()
@@ -164,7 +182,7 @@ public class ItemSlotData
         Quantity--;
 
         if (Quantity > 0) return false;
-        if (Item is EquipItemData { IsEquipped: true })
+        if (Item is EquipItemData && IsEquipped)
         {
             // UnEquip(selectedItemIndex);
         }
