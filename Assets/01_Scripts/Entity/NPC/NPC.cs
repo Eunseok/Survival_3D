@@ -1,4 +1,5 @@
 using System.Collections;
+using Framework.Audio;
 using Scripts.Characters;
 using Scripts.Items;
 using UnityEngine;
@@ -80,19 +81,24 @@ public class NPC : MonoBehaviour, IDamageable
 
     private void SetState(AIState state)
     {
+        if(_aiState == state) return;
+        
         _aiState = state;
 
         switch (_aiState)
         {
             case AIState.Idle:
+                SoundManager.Instance.StartFadeOut(3f);
                 _agent.speed = walkSpeed;
                 _agent.isStopped = true;
                 break;
             case AIState.Wandering:
+                SoundManager.Instance.StartFadeOut(3f);
                 _agent.speed = walkSpeed;
                 _agent.isStopped = false;
                 break;
             case AIState.Attacking: 
+                SoundManager.Instance.StartFadeIn("Boss", 3f);
                 _agent.speed = runSpeed;
                 _agent.isStopped = false;
                 break;
@@ -200,6 +206,8 @@ public class NPC : MonoBehaviour, IDamageable
         {
             Instantiate(item.DropPrefab, transform.position + Vector3.up * 2, Quaternion.identity);
         }
+        
+        SoundManager.Instance.StartFadeOut(3f);
 
         Destroy(gameObject);
     }

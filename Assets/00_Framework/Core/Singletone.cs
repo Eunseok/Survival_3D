@@ -3,13 +3,13 @@ using UnityEngine;
 public abstract class SingletonBase : MonoBehaviour
 {
     protected static bool IsApplicationQuitting;
-    protected static readonly bool IsDontDestroyOnLoad = true;
 }
 
 public class Singleton<T> : SingletonBase where T : MonoBehaviour
 {
-    private static T _instance;
-    
+    protected static T instance;
+    protected static bool IsDontDestroyOnLoad => true;
+
     public static T Instance
     {
         get
@@ -17,23 +17,23 @@ public class Singleton<T> : SingletonBase where T : MonoBehaviour
             if(IsApplicationQuitting)
                 return null;
             
-            if (_instance == null)
+            if (instance == null)
             {
-                _instance = FindObjectOfType<T>();
+                instance = FindObjectOfType<T>();
 
-                if (_instance == null)
+                if (instance == null)
                 {
                     var singletonObject = new GameObject(typeof(T).Name);
-                    _instance = singletonObject.AddComponent<T>();
+                    instance = singletonObject.AddComponent<T>();
                     if (IsDontDestroyOnLoad)
                       DontDestroyOnLoad(singletonObject);
                 }
             }
 
-            return _instance;
+            return instance;
         }
     }
-
+    
     private void OnApplicationQuit()
     {
         IsApplicationQuitting = true;

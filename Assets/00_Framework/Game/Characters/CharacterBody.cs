@@ -10,17 +10,22 @@ namespace Framework.Characters
         [SerializeField] private float groundCheckOffsetY = 0.1f; // Ray 시작 위치를 바닥에서 약간 올림
         [SerializeField] private float groundCheckRadiusMultiplier = 1.0f; // Ray의 간격 조절 (1.0 = 기본 크기)
 
-        [SerializeField] private Collider characterCollider;
+        [Header("Movement Settings")]
+        [SerializeField] private float footstepThreshold = 0.3f;
+        
+         private Collider _characterCollider;
+         private Rigidbody _rigidbody;
 
         private void OnValidate()
         {
-            characterCollider = GetComponent<Collider>();
+            _characterCollider = GetComponent<Collider>();
+            _rigidbody = GetComponent<Rigidbody>();
         }
 
         public bool IsGrounded()
         {
             // 1. Collider Bounds에서 계산
-            Bounds bounds = characterCollider.bounds;
+            Bounds bounds = _characterCollider.bounds;
             Vector3 basePosition = bounds.center;
             basePosition.y = bounds.min.y + groundCheckOffsetY; // 바닥에서 offset 만큼 위로 올림
 
@@ -55,14 +60,19 @@ namespace Framework.Characters
             return false;
         }
 
+        public bool IsMoving()
+        {
+            return _rigidbody.velocity.magnitude >footstepThreshold;
+        }
+
         private void OnDrawGizmosSelected()
         {
-            if (characterCollider == null) return;
+            if (_characterCollider == null) return;
 
             Gizmos.color = IsGrounded() ? Color.red : Color.green;
 
             // Bounds 및 Ray 시작 위치
-            Bounds bounds = characterCollider.bounds;
+            Bounds bounds = _characterCollider.bounds;
             Vector3 basePosition = bounds.center;
             basePosition.y = bounds.min.y + groundCheckOffsetY;
 
