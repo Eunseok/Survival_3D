@@ -19,6 +19,8 @@ public class ResourceController : MonoBehaviour, IDamageable
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHeal", Heal);
         SignalManager.Instance.ConnectSignal<float>("OnPlayerEat", Eat);
         SignalManager.Instance.ConnectSignal<float, bool>("CanAttack", UseStamina);
+        
+        SignalManager.Instance.ConnectSignal<float>("OnPlayerHit", TakeDamage);
     }
 
     private void Update()
