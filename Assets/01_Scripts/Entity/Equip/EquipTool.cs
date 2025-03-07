@@ -37,20 +37,13 @@ public class EquipTool : Equip
     public override void OnAttackInput()
     {
         if (_attacking) return;
-        bool canAttack = SignalManager.Instance.EmitSignal<float, bool>("CanAttack", useStamina);
+        bool canAttack = SignalManager.Instance.EmitSignal<float, bool>("OnUseStamina", useStamina);
         if (!canAttack) return;
         _attacking = true;
         _animator.SetTrigger(Attack);
         Invoke(nameof(OnCanAttack), attackRate);
     }
-
-    //
-    // if (CharacterManager.Instance.Player.condition.UseStamina(useStamina))
-    // +            {
-    //     +                attacking = true;
-    //     +                animator.SetTrigger("Attack");
-    //     +                Invoke("OnCanAttack", attackRate);
-    //     +            }
+    
     void OnCanAttack()
     {
         _attacking = false;

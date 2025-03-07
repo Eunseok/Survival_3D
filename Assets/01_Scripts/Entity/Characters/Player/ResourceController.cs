@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 
@@ -11,6 +12,8 @@ public class ResourceController : MonoBehaviour, IDamageable
 {
     private StatHandler _statHandler;
     public event Action OnTakeDamage;
+    
+    private bool _isSpeedBoosted;
 
     private void Awake()
     {
@@ -18,9 +21,10 @@ public class ResourceController : MonoBehaviour, IDamageable
         
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHeal", Heal);
         SignalManager.Instance.ConnectSignal<float>("OnPlayerEat", Eat);
-        SignalManager.Instance.ConnectSignal<float, bool>("CanAttack", UseStamina);
+        SignalManager.Instance.ConnectSignal<float, bool>("OnUseStamina", UseStamina);
         
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHit", TakeDamage);
+        SignalManager.Instance.ConnectSignal<float, float>("OnApplySpeedBuff", ApplySpeedBuff);
     }
 
     private void Update()
@@ -76,4 +80,22 @@ public class ResourceController : MonoBehaviour, IDamageable
             Die();
         }
     }
+
+    private void ApplySpeedBuff(float boostAmount, float duration)
+    {
+        if (!_isSpeedBoosted)
+        {
+            StartCoroutine(SpeedBuffRoutine(boostAmount, duration));
+        }
+    }
+
+    private IEnumerator SpeedBuffRoutine(float boostAmount, float duration)
+    {
+        _isSpeedBoosted = true;
+        _statHandler.Speed += boostAmount; // 속도 증가
+        yield return new WaitForSeconds(duration); // 버프 지속 시간 대기
+        _statHandler.Speed -= boostAmount; // 원래 속도로 복구
+        _isSpeedBoosted = false;
+    }
+
 }

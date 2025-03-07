@@ -14,6 +14,7 @@ public class InputManager : Singleton<InputManager>
     public event Action OnJumpPressed;
     public event Action OnInventoryPressed;
     public event Action OnAttackPressed;
+    public event Action<bool> OnDashInput;
 
 
     protected  void Awake()
@@ -31,7 +32,8 @@ public class InputManager : Singleton<InputManager>
         _playerInput.Player.Jump.started += _ => OnJumpPressed?.Invoke();
         _playerInput.Player.Interaction.started += _ => OnInteractionPressed?.Invoke();
         _playerInput.Player.Attack.started += _ => OnAttackPressed?.Invoke();
-        
+        _playerInput.Player.Dash.started += _ => OnDashInput?.Invoke(true);
+        _playerInput.Player.Dash.canceled += _ => OnDashInput?.Invoke(false);
         
         _playerInput.Shorcut.Inventory.started += _ =>
         {
