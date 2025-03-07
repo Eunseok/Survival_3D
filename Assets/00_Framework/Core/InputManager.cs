@@ -15,6 +15,7 @@ public class InputManager : Singleton<InputManager>
     public event Action OnInventoryPressed;
     public event Action OnAttackPressed;
     public event Action<bool> OnDashInput;
+    public event Action<float> OnZoomInput; 
 
 
     protected  void Awake()
@@ -34,6 +35,7 @@ public class InputManager : Singleton<InputManager>
         _playerInput.Player.Attack.started += _ => OnAttackPressed?.Invoke();
         _playerInput.Player.Dash.started += _ => OnDashInput?.Invoke(true);
         _playerInput.Player.Dash.canceled += _ => OnDashInput?.Invoke(false);
+        _playerInput.Player.Zoom.performed += ctx => OnZoomInput?.Invoke(ctx.ReadValue<float>());
         
         _playerInput.Shorcut.Inventory.started += _ =>
         {

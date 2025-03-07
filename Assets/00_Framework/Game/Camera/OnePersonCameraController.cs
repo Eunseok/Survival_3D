@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class OnePersonCameraController : MonoBehaviour
 {
     [Header("Camera Settings")] [Tooltip("카메라가 따라가는 타겟 (플레이어 캐릭터)")]
     public Transform playerBody; // 플레이어 본체

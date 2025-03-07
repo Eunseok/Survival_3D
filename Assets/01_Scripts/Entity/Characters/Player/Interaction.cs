@@ -10,6 +10,8 @@ public class Interaction : MonoBehaviour
     public float maxCheckDistance;
     public LayerMask layerMask;
     public TextMeshProUGUI promptText;
+    
+    public float height = 1.7f; // 테스트 머리 위치
 
     private float _lastCheckTime;
     private GameObject _currentInteractableObject;
@@ -34,10 +36,16 @@ public class Interaction : MonoBehaviour
 
     private void CheckForInteractableObject()
     {
+        // 카메라와 캐릭터 사이의 거리 기반으로 Ray 길이 조정
+        float zoomAdjustedDistance = (_mainCamera.transform.position - transform.position).magnitude + maxCheckDistance;
+        
+
         Vector3 screenCenterPoint = new Vector3(Screen.width / 2f, Screen.height / 2f);
         Ray ray = _mainCamera.ScreenPointToRay(screenCenterPoint);
-
-        if (Physics.Raycast(ray, out var hit, maxCheckDistance, layerMask))
+        
+        Debug.DrawRay(ray.origin, ray.direction * zoomAdjustedDistance, Color.red,3f);
+        
+        if (Physics.Raycast(ray, out var hit, zoomAdjustedDistance, layerMask))
         {
             if (hit.collider.gameObject != _currentInteractableObject)
             {
@@ -51,6 +59,7 @@ public class Interaction : MonoBehaviour
             ClearInteractionData();
         }
     }
+
 
     private void UpdatePromptText()
     {
