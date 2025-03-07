@@ -22,7 +22,7 @@ public class StatHandler : MonoBehaviour
  
     
 
-    [Range(50f, 80f)] [SerializeField] private float jumpForce = 80;
+    [Range(50f, 200f)] [SerializeField] private float jumpForce = 80;
 
     public float JumpForce
     {

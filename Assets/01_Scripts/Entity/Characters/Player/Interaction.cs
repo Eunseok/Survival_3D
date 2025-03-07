@@ -40,10 +40,8 @@ public class Interaction : MonoBehaviour
         float zoomAdjustedDistance = (_mainCamera.transform.position - transform.position).magnitude + maxCheckDistance;
         
 
-        Vector3 screenCenterPoint = new Vector3(Screen.width / 2f, Screen.height / 2f);
-        Ray ray = _mainCamera.ScreenPointToRay(screenCenterPoint);
-        
-        Debug.DrawRay(ray.origin, ray.direction * zoomAdjustedDistance, Color.red,3f);
+        var screenCenterPoint = new Vector3(Screen.width / 2f, Screen.height / 2f);
+        var ray = _mainCamera.ScreenPointToRay(screenCenterPoint);
         
         if (Physics.Raycast(ray, out var hit, zoomAdjustedDistance, layerMask))
         {
