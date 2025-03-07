@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
         
         InputManager.Instance.OnMoveInput += ctx => _moveDirection = ctx;
         InputManager.Instance.OnJumpPressed += Jump;
+        
+        SignalManager.Instance.ConnectSignal<float, float>("OnApplySpeedBuff", _statHandler.ApplySpeedBuff);
     }
 
     private void FixedUpdate()

@@ -31,7 +31,7 @@ namespace Framework.Core
         /// <summary>
         /// 초기화 작업.
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             UIManager.Instance.ShowHud<HUDGame>();
             //LoadSceneByGameState(currentState);

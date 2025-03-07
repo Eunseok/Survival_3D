@@ -54,7 +54,7 @@ public class Interaction : MonoBehaviour
 
     private void UpdatePromptText()
     {
-        if (_currentInteractable != null && promptText != null)
+        if (_currentInteractable != null && promptText)
         {
             promptText.gameObject.SetActive(true);
             promptText.text = _currentInteractable.GetInteractPrompt();
@@ -65,7 +65,7 @@ public class Interaction : MonoBehaviour
     {
         _currentInteractableObject = null;
         _currentInteractable = null;
-        if (promptText != null)
+        if (promptText)
             promptText.gameObject.SetActive(false);
     }
 

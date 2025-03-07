@@ -7,8 +7,8 @@ namespace Scripts.Items
     public enum ConsumableType
     {
         Hunger,
-        Health
-        
+        Health,
+        Speed,
     }
     
     [Serializable]
@@ -16,6 +16,7 @@ namespace Scripts.Items
     {
         public ConsumableType type;
         public float value;
+        public float duration;
     }
     
     [CreateAssetMenu(fileName = "New UseItem", menuName = "Items/Use")]

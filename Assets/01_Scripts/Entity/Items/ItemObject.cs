@@ -1,5 +1,4 @@
 using Scripts.Characters;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Scripts.Items
@@ -32,8 +31,7 @@ namespace Scripts.Items
         public void OnInteract()
         {
             if (data == null) return;
-
-            // 지역 변수로 가독성 및 효율성 향상
+            
             var player = CharacterManager.Instance.Player;
             if (player != null)
             {

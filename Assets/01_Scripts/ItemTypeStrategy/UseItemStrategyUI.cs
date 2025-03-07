@@ -28,6 +28,9 @@ public class UseItemStrategyUI : IItemTypeStrategyUI
                         case ConsumableType.Hunger:
                             SignalManager.Instance.EmitSignal("OnPlayerEat", effect.value);
                             break;
+                        case ConsumableType.Speed:
+                            SignalManager.Instance.EmitSignal("OnApplySpeedBuff", effect.value, effect.duration);
+                            break;
                     }
                 }
 
