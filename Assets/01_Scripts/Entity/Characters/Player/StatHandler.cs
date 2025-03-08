@@ -13,11 +13,18 @@ public class StatHandler : MonoBehaviour
         set => normalSpeed = Mathf.Clamp(value, 0, 100);
     }
     
-    [Range(1f, 20f)] [SerializeField] private float dashSpeed = 5;
+    [Range(1f, 20f)] [SerializeField] private float dashSpeed = 10;
     public float DashSpeed
     {
         get => dashSpeed;
         set => dashSpeed = Mathf.Clamp(value, 0, 100);
+    }
+        
+    [Range(1f, 20f)] [SerializeField] private float climbSpeed = 3;
+    public float ClimbSpeed
+    {
+        get => climbSpeed;
+        set => climbSpeed = Mathf.Clamp(value, 0, 100);
     }
  
     
