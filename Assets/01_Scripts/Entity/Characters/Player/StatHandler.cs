@@ -1,41 +1,25 @@
-using System;
-using System.Collections;
 using Scripts.Characters;
 using UnityEngine;
 
 public class StatHandler : MonoBehaviour
 {
     [Header("Movement")] 
-    [Range(1f, 20f)] [SerializeField] private float normalSpeed = 5;
+    [SerializeField] private float normalSpeed = 200f;
+
     public float Speed
     {
         get => normalSpeed;
-        set => normalSpeed = Mathf.Clamp(value, 0, 100);
+        set => normalSpeed = value;
     }
-    
-    [Range(1f, 20f)] [SerializeField] private float dashSpeed = 10;
-    public float DashSpeed
-    {
-        get => dashSpeed;
-        set => dashSpeed = Mathf.Clamp(value, 0, 100);
-    }
+
+    [SerializeField] private float dashSpeed = 300f;
+    public float DashSpeed => dashSpeed;
         
-    [Range(1f, 20f)] [SerializeField] private float climbSpeed = 3;
-    public float ClimbSpeed
-    {
-        get => climbSpeed;
-        set => climbSpeed = Mathf.Clamp(value, 0, 100);
-    }
- 
-    
+     [SerializeField] private float climbSpeed = 100f;
+    public float ClimbSpeed => climbSpeed;
 
-    [Range(50f, 200f)] [SerializeField] private float jumpForce = 80;
-
-    public float JumpForce
-    {
-        get => jumpForce;
-        set => jumpForce = Mathf.Clamp(value, 5, 80);
-    }
+    [SerializeField] private float jumpForce = 150f;
+    public float JumpForce => jumpForce;
 
 
     [Header("Conditions")] 

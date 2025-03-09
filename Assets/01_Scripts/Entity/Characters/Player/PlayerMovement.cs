@@ -1,125 +1,224 @@
 using Framework.Characters;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    public float staminaPerSecForDash = 20f;
+    // Constants
+    private const float DashStaminaCostPerSecond = 20f;
+    private const float ClimbStaminaCostPerSecond = 20f;
 
-    private Rigidbody _rigidbody;
+    // Components
+    private Rigidbody _playerRigidbody;
     private CharacterBody _characterBody;
     private StatHandler _statHandler;
+    private Camera _mainCamera;
 
+    // Movement State
     private Vector2 _moveDirection;
-
     private bool _isDashing;
     private bool _isClimbing;
 
+    // Climbing State
+    public float alignmentThreshold = 0.8f;
+    public float requiredClimbTime = 0.5f;
+    private float _climbTimer;
+
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _characterBody = GetComponent<CharacterBody>();
-        _statHandler = GetComponent<StatHandler>();
+        CacheComponents();
+        RegisterInputCallbacks();
+    }
 
-        InputManager.Instance.OnMoveInput += ctx => _moveDirection = ctx;
-        InputManager.Instance.OnJumpPressed += Jump;
-        InputManager.Instance.OnDashInput += OnDashInput;
+    private void Start()
+    {
+        _mainCamera = Camera.main;
     }
 
     private void FixedUpdate()
     {
         if (_isClimbing)
-            ClimbMove();
+            HandleClimbing();
         else
-            Move();
+            HandleMovement();
     }
 
-    private void ClimbMove()
+    // --- Core Logic ---
+    private void HandleClimbing()
+    {
+        if (!CanClimb())
+            return;
+
+        UseStaminaOrStopClimbing(ClimbStaminaCostPerSecond);
+
+        Vector3 climbDirection = CalculateClimbDirection();
+        MoveAndRotateForClimbing(climbDirection);
+    }
+
+    private void HandleMovement()
+    {
+        Vector3 direction = CalculateMovementDirection();
+        ApplyMovementPhysics(direction);
+        AttachToWallIfPossible();
+    }
+
+    // --- Helper Methods ---
+    private void CacheComponents()
+    {
+        _playerRigidbody = GetComponent<Rigidbody>();
+        _characterBody = GetComponent<CharacterBody>();
+        _statHandler = GetComponent<StatHandler>();
+    }
+
+    private void RegisterInputCallbacks()
+    {
+        InputManager.Instance.OnMoveInput += OnMoveInput;
+        InputManager.Instance.OnJumpPressed += Jump;
+        InputManager.Instance.OnDashInput += OnDashInput;
+    }
+
+    private bool CanClimb()
+    {
+        if (!_characterBody.IsOnWall || !_isClimbing)
+        {
+            ResetClimbingState();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void UseStaminaOrStopClimbing(float costPerSecond)
     {
         if (_characterBody.IsMoving())
         {
-            bool canDash =
-                SignalManager.Instance.EmitSignal<float, bool>("OnUseStamina", staminaPerSecForDash * Time.deltaTime);
-            if (canDash)
-             _isDashing = false;
-        }
-
-        // 2) 입력 받기
-        float verticalInput = _moveDirection.y;   // WS
-        float horizontalInput = _moveDirection.x; // AD
-
-        if (!_characterBody.IsForwardWall(out var wallNormal))
-        {
-            _isClimbing = false;
-        }
-        
-        // 3) 벽 노말 기반 이동 축 계산
-        var rightOfWall = Vector3.Cross(Vector3.up, wallNormal).normalized;
-        var upWall = Vector3.Cross(wallNormal, rightOfWall).normalized;
-
-        // 4) 최종 이동 벡터
-        var climbDir = (upWall * verticalInput + rightOfWall * horizontalInput);
-
-        // 5) CharacterController로 이동 적용
-        _rigidbody.velocity = climbDir * (_statHandler.ClimbSpeed * Time.deltaTime);
-        
-        // 등반 상태 On
-        _isClimbing = true;
-
-        // 캐릭터를 벽 방향으로 돌리기
-        Vector3 wallForward = -wallNormal; 
-        Quaternion targetRotation = Quaternion.LookRotation(wallForward, Vector3.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 1f * Time.deltaTime);
-
-        // 이전 속도 등 초기화 필요 시 처리
-        // ex) Rigidbody를 사용한다면, rb.velocity = Vector3.zero; 등
-    }
-    void TryAttachToWall()
-    {
-       // if (isWallDetected)
-        {
-            // // 등반 상태 On
-            // _isClimbing = true;
-            //
-            // // 캐릭터를 벽 방향으로 돌리기
-            // Vector3 wallForward = -wallNormal; 
-            // Quaternion targetRotation = Quaternion.LookRotation(wallForward, Vector3.up);
-            // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, attachRotationSpeed * Time.deltaTime);
-            //
-            // // 이전 속도 등 초기화 필요 시 처리
-            // // ex) Rigidbody를 사용한다면, rb.velocity = Vector3.zero; 등
+            bool hasStamina = SignalManager.Instance.EmitSignal<float, bool>(
+                "OnUseStamina", costPerSecond * Time.deltaTime);
+            if (!hasStamina)
+            {
+                ResetClimbingState();
+            }
         }
     }
-    private void Move()
+
+    private Vector3 CalculateMovementDirection()
     {
-        Vector3 direction = transform.forward * _moveDirection.y + transform.right * _moveDirection.x;
-        float moveSpeed = _statHandler.Speed;
+        Transform cameraTransform = _mainCamera.transform;
+
+        Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
+        Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+
+        return forward * _moveDirection.y + right * _moveDirection.x;
+    }
+
+    private void ApplyMovementPhysics(Vector3 direction)
+    {
+        float speed = _statHandler.Speed;
 
         if (_isDashing && _characterBody.IsMoving())
+            speed = HandleDash(speed);
+
+        if (_moveDirection != Vector2.zero)
+            SmoothlyRotateTowardsDirection(direction);
+
+        direction *= speed * Time.deltaTime;
+        _playerRigidbody.AddForce(direction, ForceMode.VelocityChange);
+    }
+
+    private float HandleDash(float baseSpeed)
+    {
+        bool canDash = SignalManager.Instance.EmitSignal<float, bool>(
+            "OnUseStamina", DashStaminaCostPerSecond * Time.deltaTime);
+        if (canDash)
+            return baseSpeed + _statHandler.DashSpeed;
+
+        _isDashing = false;
+        return baseSpeed;
+    }
+
+    private void AttachToWallIfPossible()
+    {
+        if (_characterBody.IsOnWall && _characterBody.IsOnGrounded && _moveDirection != Vector2.zero)
         {
-            bool canDash =
-                SignalManager.Instance.EmitSignal<float, bool>("OnUseStamina", staminaPerSecForDash * Time.deltaTime);
-            if (canDash)
-                moveSpeed = _statHandler.DashSpeed;
+            Vector3 wallNormal = _characterBody.WallHitNormal;
+            float alignment = Vector3.Dot(transform.forward, -wallNormal);
+
+            if (alignment >= alignmentThreshold)
+            {
+                _climbTimer += Time.deltaTime;
+                if (_climbTimer >= requiredClimbTime)
+                    StartClimbing();
+            }
+            else
+            {
+                _climbTimer = 0f;
+            }
+        }
+        else
+        {
+            _climbTimer = 0f;
+        }
+    }
+
+    private void StartClimbing()
+    {
+        _isClimbing = true;
+        _playerRigidbody.velocity = Vector3.zero;
+        _playerRigidbody.useGravity = false;
+    }
+
+    private void MoveAndRotateForClimbing(Vector3 direction)
+    {
+        if (_characterBody.IsOnGrounded && Vector3.Dot(Vector3.down, direction) > 0)
+        {
+            ResetClimbingState();
+            return;
         }
 
-        direction *= moveSpeed;
-        direction.y = _rigidbody.velocity.y;
-        _rigidbody.velocity = direction;
+        Vector3 wallForward = -_characterBody.WallHitNormal;
+        direction *= _statHandler.ClimbSpeed * Time.deltaTime;
+
+        _playerRigidbody.AddForce(direction, ForceMode.VelocityChange);
+        SmoothlyRotateTowardsDirection(wallForward);
     }
 
-
-    private void OnDashInput(bool isDashing)
+    private void SmoothlyRotateTowardsDirection(Vector3 lookDirection)
     {
-        _isDashing = isDashing;
+        Quaternion targetRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
     }
+
+    private Vector3 CalculateClimbDirection()
+    {
+        Vector3 wallNormal = _characterBody.WallHitNormal;
+
+        return Vector3.Cross(wallNormal, Vector3.Cross(Vector3.up, wallNormal)).normalized * _moveDirection.y -
+               Vector3.Cross(Vector3.up, wallNormal).normalized * _moveDirection.x;
+    }
+
+    private void ResetClimbingState()
+    {
+        _isClimbing = false;
+        _playerRigidbody.useGravity = true;
+        transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+    }
+
+    // --- Event Handlers ---
+    private void OnMoveInput(Vector2 input) => _moveDirection = input;
+    private void OnDashInput(bool isDashing) => _isDashing = isDashing;
 
     private void Jump()
     {
-        if (_characterBody && _characterBody.IsGrounded())
+        if (_isClimbing)
         {
-            _rigidbody.AddForce(Vector3.up * _statHandler.JumpForce, ForceMode.Impulse);
+            Vector3 jumpDirection = (_characterBody.WallHitNormal * 2f + Vector3.up).normalized;
+            _playerRigidbody.AddForce(jumpDirection * _statHandler.JumpForce, ForceMode.Impulse);
+            transform.forward = new Vector3(jumpDirection.x, 0, jumpDirection.z);
+            ResetClimbingState();
+        }
+        else if (_characterBody.IsOnGrounded)
+        {
+            _playerRigidbody.AddForce(Vector3.up * _statHandler.JumpForce, ForceMode.Impulse);
         }
     }
 }

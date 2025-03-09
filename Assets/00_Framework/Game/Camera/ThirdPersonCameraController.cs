@@ -44,12 +44,17 @@ public class ThirdPersonCamera : MonoBehaviour
         var angles = transform.eulerAngles;
         _horizontalRotation = angles.y;
         _verticalRotation = angles.x;
+        
+        // 마우스 커서를 숨기고 고정
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void OnEnable()
     {
         InputManager.Instance.OnLookInput += HandleMouseLook;
         InputManager.Instance.OnZoomInput += HandleMouseZoom;
+        
+        
     }
 
     private void OnDisable()
@@ -95,11 +100,12 @@ public class ThirdPersonCamera : MonoBehaviour
         // 캐릭터의 회전을 카메라의 수평 회전에 맞춤
         if (allowCharacterRotation)
         {
+            Debug.Log("Allow Character Rotation");
             target.eulerAngles = new Vector3(0, _horizontalRotation, 0);
         }
 
         // 어깨 중심 오프셋 계산
-        var offset = target.right * (isOverShoulder ? shoulderOffset : 0);
+        var offset = transform.right * (isOverShoulder ? shoulderOffset : 0);
 
         // 카메라의 회전 적용
         transform.LookAt(target.position + offset + Vector3.up * (height * 0.5f));

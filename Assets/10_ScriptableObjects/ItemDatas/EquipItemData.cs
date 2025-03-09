@@ -1,6 +1,5 @@
 // Equip/ItemDataEquip.cs
 
-using System;
 using UnityEngine;
 
 namespace Scripts.Items
