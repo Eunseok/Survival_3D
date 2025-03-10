@@ -1,3 +1,5 @@
+using _01_Scripts.UI;
+using Managers;
 using Scripts.UI;
 using UnityEngine;
 
@@ -13,7 +15,7 @@ namespace Framework
            // EnemyManager.Instance.SpawnEnemies();
 
             // 게임플레이 UI 표시
-          //  UIManager.Instance.ShowUI<GameplayUI>(UICategory.SceneUI);
+             UIManager.Instance.ShowUI<UIGameScene>();
 
             // 게임 로직 실행
             Debug.Log("Gameplay is now running.");

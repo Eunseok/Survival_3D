@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using DefaultNamespace;
+using Scripts.UI;
 using UnityEngine;
 
-namespace Scripts.UI
+namespace Managers
 {
     public enum UICategory
     {
@@ -42,11 +43,15 @@ namespace Scripts.UI
             canvas.sortingOrder = sort ? _currentOrder++ : 0;
         }
 
-        public T ShowUI<T>( UICategory category = UICategory.PopupUI) where T : UIBase
+        public T ShowUI<T>( UICategory category = UICategory.SceneUI) where T : UIBase
         {
-            return ShowUI(typeof(T).Name) as T;
+            return ShowUI(typeof(T).Name,category) as T;
         }
 
+        public T ShowPopup<T>( UICategory category = UICategory.PopupUI) where T : UIBase
+        {
+            return ShowUI(typeof(T).Name,category) as T;
+        }
         public UIBase ShowUI(string uiName, UICategory category = UICategory.PopupUI)
         {
             if (_activeUIs.TryGetValue(uiName, out var existingUI))
@@ -66,6 +71,7 @@ namespace Scripts.UI
         private UIBase CreateUIInstance(GameObject prefab, string uiName)
         {
             var instance = Instantiate(prefab, Root.transform);
+            instance.name = uiName;
             var uiComponent = EnableUIComponent<UIBase>(instance, uiName);
             
 
@@ -99,6 +105,7 @@ namespace Scripts.UI
             var uiComponent = obj.GetOrAddComponent<T>();
             if (uiComponent is UIPopup popup)
             {
+                Debug.Log($"Open UI: {uiName}");
                 _activeUIs[uiName] = popup;
             }
             else if (uiComponent is UIScene hud)
@@ -128,6 +135,7 @@ namespace Scripts.UI
         }
         public void ClosePopup(UIBase ui)
         {
+            Debug.Log($"Close UI: {ui.name}");
             _activeUIs.Remove(ui.name);
             Destroy(ui.gameObject);
             _currentOrder--;

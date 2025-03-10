@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using _01_Scripts.Gameplay.Entity.Characters.Player.Old;
+using Managers;
 using Scripts.Items;
 using Scripts.UI;
 using TMPro;

@@ -1,3 +1,5 @@
+using Managers;
+
 namespace Scripts.UI
 {
     public class UIScene : UIBase

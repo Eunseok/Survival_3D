@@ -24,12 +24,7 @@ namespace Framework.Characters
                 transform.position.z);
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
-
-            // // 애니메이터에 지면 상태 전달
-            // if (_hasAnimator)
-            // {
-            //     _animator.SetBool(_animIDGrounded, Grounded);
-            // }
+            
             return Grounded;
         }
         

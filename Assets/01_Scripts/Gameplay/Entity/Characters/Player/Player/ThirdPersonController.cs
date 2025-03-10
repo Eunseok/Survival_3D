@@ -10,9 +10,6 @@ using UnityEngine.InputSystem;
  */
 
 [RequireComponent(typeof(CharacterController))] // CharacterController 컴포넌트 필수
-#if ENABLE_INPUT_SYSTEM
-[RequireComponent(typeof(PlayerInput))] // Input System을 사용할 경우 PlayerInput 컴포넌트 필수
-#endif
 public class ThirdPersonController : MonoBehaviour
 {
 #if ENABLE_INPUT_SYSTEM
@@ -28,6 +25,7 @@ public class ThirdPersonController : MonoBehaviour
     private GroundChecker _groundChecker;
     private MovementController _movementController;
     private ThirdPersonCameraController _cameraController;
+    private StatHandler _statHandler;
 
     private bool _hasAnimator;
     
@@ -56,9 +54,10 @@ public class ThirdPersonController : MonoBehaviour
         _groundChecker = GetComponent<GroundChecker>();
         _movementController = GetComponent<MovementController>();
         _cameraController = GetComponent<ThirdPersonCameraController>();
+        _statHandler = GetComponent<StatHandler>();
         
         _animationController.Initialize(_animator);
-        _movementController.Initialize(_input, _mainCamera);
+        _movementController.Initialize(_input, _mainCamera,_statHandler);
     }
 
     private void Update()

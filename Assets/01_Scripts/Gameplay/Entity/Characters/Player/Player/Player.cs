@@ -2,10 +2,11 @@ using System;
 using Scripts.Characters;
 using Scripts.Items;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
-    public ResourceController resourceController;
+    [FormerlySerializedAs("resourceController")] public ResourceHandler ResourceHandler;
     public StatHandler statHandler;
    // public InventorySystem playerInventory;
     
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
     {
         CharacterManager.Instance.Player = this;
         
-        resourceController = GetComponent<ResourceController>();
+        ResourceHandler = GetComponent<ResourceHandler>();
         statHandler = GetComponent<StatHandler>();
         //playerInventory = GetComponent<InventorySystem>();
     }

@@ -18,7 +18,7 @@ public class DamageIndicator : MonoBehaviour
 
     private void Start()
     {
-        CharacterManager.Instance.Player.resourceController.OnTakeDamage += Flash;
+        CharacterManager.Instance.Player.ResourceHandler.OnTakeDamage += Flash;
     }
 
 

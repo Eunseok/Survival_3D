@@ -20,6 +20,9 @@ namespace _01_Scripts.Gameplay.Camera
         [Tooltip("카메라의 기본 회전값을 보정하는 추가 각도 (고정된 시점에서 미세 조정 가능)")]
         public float CameraAngleOverride = 0.0f;
 
+        [Tooltip("카메라 회전 속도")]
+        public float DeltaTimeMultiplier = 1f;
+
         [Tooltip("카메라의 위치를 모든 축에서 고정할지 여부")] public bool LockCameraPosition = false;
         
         // Cinemachine 관련 변수
@@ -32,18 +35,6 @@ namespace _01_Scripts.Gameplay.Camera
         
         private const float _threshold = 0.01f; // 작은 입력값 무시하는 임계값
         
-        private bool IsCurrentDeviceMouse
-        {
-            get
-            {
-#if ENABLE_INPUT_SYSTEM
-                return _playerInput.currentControlScheme == "KeyboardMouse";
-#else
-				return false;
-#endif
-            }
-        }
-
 
         private void Start()
         {
@@ -57,17 +48,16 @@ namespace _01_Scripts.Gameplay.Camera
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
         }
         
+        
         public void CameraRotation(Vector2 look)
         {
             // 입력 값이 존재하고, 카메라 위치가 고정되지 않은 경우 실행
             if (look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
-                // 마우스 입력은 Time.deltaTime을 곱하지 않음 (즉각적인 반응을 위함)
-                float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 // 입력된 값(look)을 기반으로 카메라의 Yaw(좌우 회전) 및 Pitch(상하 회전) 값을 업데이트
-                _cinemachineTargetYaw += look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += look.y * deltaTimeMultiplier;
+                _cinemachineTargetYaw += look.x * DeltaTimeMultiplier;
+                _cinemachineTargetPitch -= look.y * DeltaTimeMultiplier;
             }
 
             // 회전 값이 일정 범위를 넘지 않도록 제한 (Yaw는 제한 없이 회전 가능, Pitch는 위/아래 범위 설정)

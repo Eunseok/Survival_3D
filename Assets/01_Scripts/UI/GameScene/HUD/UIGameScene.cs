@@ -12,9 +12,8 @@ namespace _01_Scripts.UI
             PromptText
         }
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             AutoBind<GameObject>(typeof(HudType));
         }
     }

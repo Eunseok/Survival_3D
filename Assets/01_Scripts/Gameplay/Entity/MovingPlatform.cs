@@ -32,29 +32,35 @@ public class MovingPlatform : MonoBehaviour
         _targetPoint = _movingToB ? pointA.position : pointB.position;
         _movingToB = !_movingToB; // 방향 전환
     }
-
-    private void OnCollisionEnter(Collision collision)
+    
+    private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnCollisionEnter");
+        if (!other.CompareTag("Player")) return;
 
-            // 충돌된 모든 접점(Contact Point) 검사
-            foreach (ContactPoint contact in collision.contacts)
+        // Ray를 캐릭터 아래로 발사
+        Ray ray = new Ray(other.bounds.center - new Vector3(0, other.bounds.extents.y, 0), Vector3.down);
+
+        // 충돌 결과
+        if (Physics.Raycast(ray, out RaycastHit hit, 1f))
+        {
+            if (hit.collider.gameObject == this.gameObject)
             {
-                // 충돌체에 아래가 아니면 continue
-                if (!(Vector3.Dot(contact.normal, Vector3.down) > 0.9f)) continue;
-                
-                // 플랫폼의 자식으로 설정
-                collision.transform.SetParent(transform);
-                
-                break; 
+                other.transform.SetParent(transform);
+                Debug.Log("위에서 트리거에 닿음");
             }
+        }
+        else
+        {
+            Debug.Log("아래에서 트리거에 닿음");
+        }
     }
 
-    private void OnCollisionExit(Collision collision)
+
+    private void OnTriggerExit(Collider other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            collision.transform.SetParent(null); // 플랫폼에서 내려올 때 자식 관계 해제
+            other.transform.SetParent(null); // 플랫폼에서 내려올 때 자식 관계 해제
         }
     }
 }

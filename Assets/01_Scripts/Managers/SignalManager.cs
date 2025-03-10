@@ -5,7 +5,7 @@ using UnityEngine;
 // SignalManager: Action과 Func의 혼합 방식을 적용한 유연한 신호 처리 시스템.
 // - 고정된 매개변수 타입은 제너릭으로 처리
 // - 유동적인 매개변수 개수/타입은 object[] 로 처리
-namespace Framework
+namespace Managers
 {
     public class SignalManager : Singleton<SignalManager>
     {

@@ -1,5 +1,7 @@
 // EquipItemData에 대한 전략 구현
 
+using _01_Scripts.Gameplay.Entity.Characters.Player.Old;
+using Managers;
 using Scripts.Items;
 using TMPro;
 using UnityEngine;

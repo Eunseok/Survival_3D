@@ -1,12 +1,10 @@
+using Managers;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
 
-#if ENABLE_INPUT_SYSTEM
-    [RequireComponent(typeof(PlayerInput))] // Input System을 사용할 경우 PlayerInput 컴포넌트 필수
-#endif
 public class InputHandler : MonoBehaviour
 {
     [Header("Character Input Values")] public Vector2 move;
@@ -19,48 +17,45 @@ public class InputHandler : MonoBehaviour
     [Header("Mouse Cursor Settings")] public bool cursorLocked = true;
     public bool cursorInputForLook = true;
 
-#if ENABLE_INPUT_SYSTEM
-    public void OnMove(InputValue value)
+    
+    private bool _isInventoryOpen;
+    
+    private void OnEnable()
     {
-        MoveInput(value.Get<Vector2>());
+        InputManager.Instance.OnMoveInput += MoveInput;
+        InputManager.Instance.OnLookInput += LookInput;
+        InputManager.Instance.OnDashInput += SprintInput;
+        InputManager.Instance.OnJumpPressed += JumpInput;
+        InputManager.Instance.OnInventoryPressed += ToggleInventory;
+    }
+    
+    private void OnDisable()
+    {
+        if(InputManager.Instance == null) return;
+        
+        InputManager.Instance.OnMoveInput -= MoveInput;
+        InputManager.Instance.OnLookInput -= LookInput;
+        InputManager.Instance.OnDashInput -= SprintInput;
+        InputManager.Instance.OnJumpPressed -= JumpInput;
+        InputManager.Instance.OnInventoryPressed -= ToggleInventory;
     }
 
-    public void OnLook(InputValue value)
-    {
-        if (cursorInputForLook)
-        {
-            LookInput(value.Get<Vector2>());
-        }
-    }
-
-    public void OnJump(InputValue value)
-    {
-        JumpInput(value.isPressed);
-    }
-
-    public void OnSprint(InputValue value)
-    {
-        SprintInput(value.isPressed);
-    }
-#endif
-
-
-    public void MoveInput(Vector2 newMoveDirection)
+    private void MoveInput(Vector2 newMoveDirection)
     {
         move = newMoveDirection;
     }
 
-    public void LookInput(Vector2 newLookDirection)
+    private void LookInput(Vector2 newLookDirection)
     {
         look = newLookDirection;
     }
 
-    public void JumpInput(bool newJumpState)
+    private void JumpInput(bool newJumpState)
     {
         jump = newJumpState;
     }
 
-    public void SprintInput(bool newSprintState)
+    private void SprintInput(bool newSprintState)
     {
         sprint = newSprintState;
     }
@@ -74,4 +69,23 @@ public class InputHandler : MonoBehaviour
     {
         Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
     }
+    
+    void ToggleInventory()
+    {
+        if (_isInventoryOpen)
+        {
+            _isInventoryOpen = false;
+            InputManager.Instance.Player.Enable();
+            SetCursorState(true);
+        }
+        else
+        {
+            _isInventoryOpen = true;
+            InputManager.Instance.Player.Disable();
+            SetCursorState(false);
+        }
+    }
+
+    private bool IsCursorLocked() => Cursor.lockState == CursorLockMode.Locked;
+
 }

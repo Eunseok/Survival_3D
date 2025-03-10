@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Managers;
 using UnityEngine;
 
 
@@ -8,7 +9,7 @@ public interface IDamageable
     void TakeDamage(float damage);
 }
 
-public class ResourceController : MonoBehaviour, IDamageable
+public class ResourceHandler : MonoBehaviour, IDamageable
 {
     private StatHandler _statHandler;
     public event Action OnTakeDamage;
@@ -69,22 +70,26 @@ public class ResourceController : MonoBehaviour, IDamageable
             Die();
         }
     }
+    
+
 
     private void ApplySpeedBuff(float boostAmount, float duration)
     {
         if (!_isSpeedBoosted)
         {
-           // StartCoroutine(SpeedBuffRoutine(boostAmount, duration));
+           StartCoroutine(SpeedBuffRoutine(boostAmount, duration));
         }
     }
 
-    // private IEnumerator SpeedBuffRoutine(float boostAmount, float duration)
-    // {
-    //     _isSpeedBoosted = true;
-    //     _statHandler.Speed += boostAmount; // 속도 증가
-    //     yield return new WaitForSeconds(duration); // 버프 지속 시간 대기
-    //     _statHandler.Speed -= boostAmount; // 원래 속도로 복구
-    //     _isSpeedBoosted = false;
-    // }
+     private IEnumerator SpeedBuffRoutine(float boostAmount, float duration)
+     {
+         _isSpeedBoosted = true;
+         _statHandler.MoveSpeed += boostAmount; // 속도 증가
+         _statHandler.SprintSpeed += boostAmount; // 속도 증가
+         yield return new WaitForSeconds(duration); // 버프 지속 시간 대기
+         _statHandler.MoveSpeed -= boostAmount; // 원래 속도로 복구
+         _statHandler.SprintSpeed -= boostAmount; // 속도 증가
+         _isSpeedBoosted = false;
+     }
 
 }

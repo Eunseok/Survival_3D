@@ -1,4 +1,5 @@
 using Framework.Audio;
+using Managers;
 using Scripts.UI;
 using UnityEngine;
 
@@ -41,24 +42,17 @@ namespace Framework
         private static void InitializeManagers()
         {
             // GameManager 강제 생성
-            if (!GameManager.Instance)
+            if (!GameManager.HasInstance)
                 CreateManager("GameManager", "Managers/GameManager");
-
-            // UIManager 강제 생성
-            if (!UIManager.Instance)
-                CreateManager("UIManager", "Managers/UIManager");
             
             // SoundManager 강제 생성
-            if (!SoundManager.Instance)
+            if (!SoundManager.HasInstance)
                 CreateManager("SoundManager", "Managers/SoundManager");
             
             // SceneLoader 강제 생성
-            if (!UIManager.Instance)
+            if (!SceneLoader.HasInstance)
                 CreateManager("SceneLoader", "Managers/SceneLoader");
             
-            // SignalManager 강제 생성
-            if (!SignalManager.Instance)
-                CreateManager("SignalManager", "Managers/SignalManager");
 
             // 필요한 다른 매니저 추가 가능
         }

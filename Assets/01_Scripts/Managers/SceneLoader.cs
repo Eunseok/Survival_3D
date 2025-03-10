@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Framework
+namespace Managers
 {
     /// <summary>
     /// 씬 로딩 및 전환을 관리하는 클래스.

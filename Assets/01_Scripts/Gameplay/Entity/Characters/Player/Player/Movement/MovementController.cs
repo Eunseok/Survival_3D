@@ -1,22 +1,20 @@
+using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Framework.Characters
 {
     [RequireComponent(typeof(CharacterController))] // CharacterController 컴포넌트 필수
-#if ENABLE_INPUT_SYSTEM
-    [RequireComponent(typeof(PlayerInput))] // Input System을 사용할 경우 PlayerInput 컴포넌트 필수
-#endif
     public class MovementController : MonoBehaviour
     {
-        [Header("플레이어 설정")] [Tooltip("캐릭터의 이동 속도 (m/s)")]
-        public float MoveSpeed = 2.0f;
-
-        [Tooltip("캐릭터의 질주(Sprint) 속도 (m/s)")] 
-        public float SprintSpeed = 5.335f;
-        
-        [Tooltip("질주시 소모되는 스테미나")]
-        public float SprintStaminaCost = 20f;
+        // [Header("플레이어 설정")] [Tooltip("캐릭터의 이동 속도 (m/s)")]
+        // public float MoveSpeed = 2.0f;
+        //
+        // [Tooltip("캐릭터의 질주(Sprint) 속도 (m/s)")] 
+        // public float SprintSpeed = 5.335f;
+        //
+        // [Tooltip("질주시 소모되는 스테미나")]
+        // public float SprintStaminaCost = 20f;
 
         [Tooltip("캐릭터가 이동 방향을 바라보는 속도")] [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
@@ -41,7 +39,7 @@ namespace Framework.Characters
         private float _speed;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
-        private float _verticalVelocity;
+        protected float _verticalVelocity;
         private readonly float _terminalVelocity = 53.0f;
 
         //애니메이터로 전달할 값
@@ -56,23 +54,25 @@ namespace Framework.Characters
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         
-        private CharacterController _controller;
-        private InputHandler _input;
-        private GameObject _mainCamera;
+        protected CharacterController _controller;
+        protected InputHandler _input;
+        protected GameObject _mainCamera;
+        protected StatHandler _statHandler;
         
         
-        public void Initialize(InputHandler input, GameObject mainCamera)
+        public virtual void  Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
         {
             _input = input;
             _mainCamera = mainCamera;
             _controller = GetComponent<CharacterController>();
+            _statHandler = statHandler;
             
             // 점프 및 낙하 타이머 초기화
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
         }
 
-        public void Move()
+        public virtual void  Move()
         {
             
             bool isSprinting = _input.sprint;
@@ -85,7 +85,7 @@ namespace Framework.Characters
             if (_input.move != Vector2.zero)
             {
                 // 이동 속도를 설정 (걷기 속도 또는 질주 속도)
-                targetSpeed = HandleMovementSpeed(isSprinting);
+                targetSpeed = _statHandler.HandleMovementSpeed(isSprinting);
             }
 
             // 플레이어의 현재 수평 이동 속도를 가져옴
@@ -140,19 +140,7 @@ namespace Framework.Characters
             
         }
         
-        private float HandleMovementSpeed(bool isSprinting)
-        {
-            if (!isSprinting) return MoveSpeed;
-            
-            bool canDash = SignalManager.Instance.EmitSignal<float, bool>(
-                "OnUseStamina", SprintStaminaCost * Time.deltaTime);
-            if (canDash)
-                return SprintSpeed;
-            
-            return MoveSpeed;
-        }
-        
-        public void JumpAndGravity(bool grounded)
+        public virtual void JumpAndGravity(bool grounded)
         {
             if (grounded) // 플레이어가 지면에 있는 경우
             {
@@ -161,13 +149,7 @@ namespace Framework.Characters
 
                 IsJumping = false;
                 IsFreeFalling = false;
-
-                // // 애니메이터 업데이트 (캐릭터가 있을 경우)
-                // if (_hasAnimator)
-                // {
-                //     _animator.SetBool(_animIDJump, false);
-                //     _animator.SetBool(_animIDFreeFall, false);
-                // }
+                
 
                 // 지면에 있을 때, 중력이 무한히 누적되지 않도록 초기화
                 if (_verticalVelocity < 0.0f)
@@ -204,11 +186,6 @@ namespace Framework.Characters
                 else
                 {
                     IsFreeFalling = true;
-                    // // 일정 시간이 지나면 애니메이터에 '낙하 중' 상태 전달
-                    // if (_hasAnimator)
-                    // {
-                    //     _animator.SetBool(_animIDFreeFall, true);
-                    // }
                 }
 
                 // 공중에 있을 때 점프 입력을 초기화 (더블 점프 방지)
@@ -220,6 +197,12 @@ namespace Framework.Characters
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
+        }
+        
+        public void ApplytForceY(float force)
+        {
+            _verticalVelocity += force;
+            _input.jump = true;
         }
         
     }

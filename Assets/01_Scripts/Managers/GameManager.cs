@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Framework
+namespace Managers
 {
     /// <summary>
     /// 게임 상태 및 전체 흐름을 관리하는 기본 GameManager 클래스.
@@ -21,6 +21,11 @@ namespace Framework
         /// 현재 게임 상태를 제공.
         /// </summary>
         public GameState CurrentState => currentState;
+
+        private void Start()
+        {
+            InitializeScene();
+        }
 
         /// <summary>
         /// 게임 상태를 변경합니다.

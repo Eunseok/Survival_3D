@@ -3,6 +3,8 @@ using Scripts.Items;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using _01_Scripts.Gameplay.Entity.Characters.Player.Old;
+using Managers;
 
 // UseItemData에 대한 전략 구현
 public class UseItemStrategyUI : IItemTypeStrategyUI

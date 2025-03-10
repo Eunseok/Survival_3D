@@ -52,7 +52,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5532249f389924f29a1f88030361fd35, type: 3}
   sfxVolume: 1
   sfxPitchVariance: 0
-  soundSourcePrefab: {fileID: 7888731691148540542, guid: ccbc85ed577b7408e9092baca3d8d57e, type: 3}
+  soundSourcePrefab: {fileID: 1257598057327151122, guid: 815ae80e933d54f55a207af785569a7f, type: 3}
   isMuted: 0
 --- !u!82 &6315411985952576660
 AudioSource:
