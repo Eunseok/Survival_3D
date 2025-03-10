@@ -44,6 +44,7 @@ public class ClimbingMovementController : MonoBehaviour
     private GameObject _mainCamera;
     private StatHandler _statHandler;
 
+    private WallChecker _wallChecker;
 
     public void Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
     {
@@ -51,6 +52,7 @@ public class ClimbingMovementController : MonoBehaviour
         _mainCamera = mainCamera;
         _controller = GetComponent<CharacterController>();
         _statHandler = statHandler;
+        _wallChecker = GetComponent<WallChecker>();
 
         // 점프 및 낙하 타이머 초기화
         _jumpTimeoutDelta = JumpTimeout;
@@ -82,24 +84,96 @@ public class ClimbingMovementController : MonoBehaviour
         // 애니메이션 블렌딩 처리
         AnimationBlend = Mathf.Lerp(AnimationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (AnimationBlend < 0.01f) AnimationBlend = 0f;
+        
+        
+        // --- 벽 정보를 기반으로 이동 방향 계산 ---
+        Vector3 wallNormal = _wallChecker.WallHitNormal;
+        
+        
+        // 벽 표면에 평행한 축 계산
+        Vector3 wallRight = Vector3.Cross(Vector3.up, wallNormal).normalized;
+        Vector3 wallUp = Vector3.Cross(wallNormal, wallRight).normalized;
+        
+        // 입력 방향을 벽 표면 기준으로 변환
+        Vector3 direction = wallUp * _input.move.y + wallRight * _input.move.x;
+        Debug.Log(direction);
+        // 회전 로직: 벽 표면의 방향 기준으로 캐릭터 회전
+        Vector3 wallForward = -wallNormal;
+        Quaternion targetRotation = Quaternion.LookRotation(wallForward, Vector3.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
 
-        // 이동 방향을 정규화 (이제 Y축도 포함)
-        Vector3 inputDirection = new Vector3(_input.move.x, _input.move.y, 0.0f).normalized;
-
-        // 플레이어가 이동 방향을 바라보도록 회전 (이제 상하 이동도 고려)
-        if (_input.move != Vector2.zero)
-        {
-            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.y) * Mathf.Rad2Deg;
-            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.z, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
-
-            // 플레이어를 벽 표면을 기준으로 회전
-            transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotation);
-        }
-
-        // 목표 이동 방향 설정 (이제 위/아래 이동도 가능)
-        Vector3 targetDirection = new Vector3(inputDirection.x, inputDirection.y, 0.0f);
+        // // 목표 이동 방향 설정 (이제 위/아래 이동도 가능)
+        // Vector3 targetDirection = new Vector3(direction.x, direction.y, 0.0f);
 
         // 이동 적용 (이제 Y축 이동도 포함)
-        _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime));
+        _controller.Move(direction.normalized * (_speed * Time.deltaTime));
     }
+    
+    
+    // public void Move()
+    // {
+    //     // 목표 클라밍 속도 설정
+    //     float targetSpeed = _statHandler.ClimbSpeed;
+    //     if (_input.move == Vector2.zero) targetSpeed = 0f;
+    //
+    //     // 현재 이동 속도 계산 (Y축 포함)
+    //     float currentSpeed = new Vector3(_controller.velocity.x, _controller.velocity.y, _controller.velocity.z).magnitude;
+    //
+    //     // 속도 임계치
+    //     float speedOffset = 0.1f;
+    //     InputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+    //
+    //     // 목표 속도를 기준으로 가속 또는 감속
+    //     if (currentSpeed < targetSpeed - speedOffset || currentSpeed > targetSpeed + speedOffset)
+    //     {
+    //         _speed = Mathf.Lerp(currentSpeed, targetSpeed * InputMagnitude, Time.deltaTime * SpeedChangeRate);
+    //         _speed = Mathf.Round(_speed * 1000f) / 1000f;
+    //     }
+    //     else
+    //     {
+    //         _speed = targetSpeed;
+    //     }
+    //
+    //     // 애니메이션 블렌딩 처리
+    //     AnimationBlend = Mathf.Lerp(AnimationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+    //     if (AnimationBlend < 0.01f) AnimationBlend = 0f;
+    //
+    //     // --- 벽 정보를 기반으로 이동 방향 계산 ---
+    //     Vector3 wallNormal = _wallChecker.WallHitNormal;
+    //
+    //     // 벽 표면에 평행한 축 계산
+    //     Vector3 wallRight = Vector3.Cross(Vector3.up, wallNormal).normalized;
+    //     Vector3 wallUp = Vector3.Cross(wallNormal, wallRight).normalized;
+    //
+    //     // 입력 방향을 벽 표면 기준으로 변환
+    //     Vector3 direction = wallUp * _input.move.y + wallRight * _input.move.x;
+    //
+    //     // 이동 벡터 계산
+    //     direction *= _speed * Time.deltaTime;
+    //
+    //     // 회전 로직: 벽 표면의 방향 기준으로 캐릭터 회전
+    //     Vector3 wallForward = -wallNormal;
+    //     Quaternion targetRotation = Quaternion.LookRotation(wallForward, Vector3.up);
+    //     transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+    //
+    //     // 캐릭터 이동 적용
+    //     _controller.Move(direction);
+    // }
+    //
+    //
+    // private Vector3 CalculateClimbDirection()
+    // {
+    //     Vector3 wallNormal = _wallChecker.WallHitNormal;
+    //
+    //     float direction = Vector3.Cross(wallNormal, Vector3.Cross(Vector3.up, wallNormal)).normalized * _moveDirection.y -
+    //            Vector3.Cross(Vector3.up, wallNormal).normalized * _moveDirection.x;
+    //     
+    //     Vector3 wallForward = -_wallChecker.WallHitNormal;
+    //     direction *= _statHandler.ClimbSpeed * Time.deltaTime;
+    //
+    //     _playerRigidbody.AddForce(direction, ForceMode.VelocityChange);
+    //     Quaternion targetRotation = Quaternion.LookRotation(wallForward, Vector3.up);
+    //     transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+    // }
+    
 }
