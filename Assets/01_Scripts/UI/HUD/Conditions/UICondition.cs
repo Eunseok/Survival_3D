@@ -18,6 +18,10 @@ namespace Scripts.UI.Condition
                 playerStatHandler.health.OnValueChangedUnityEvent += healthBar.SetCondition;
                 playerStatHandler.stamina.OnValueChangedUnityEvent += staminaBar.SetCondition;
             }
+            else
+            {
+                Debug.Log("Player is null");
+            }
         }
     }
 }

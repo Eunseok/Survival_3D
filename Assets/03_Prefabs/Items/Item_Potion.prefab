@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5546908566734519151}
   - component: {fileID: 907746518211675704}
   - component: {fileID: 353439400632577011}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GlowParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4815,7 +4815,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 606575575343601294}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4850,7 +4850,7 @@ GameObject:
   - component: {fileID: 7305028831849502655}
   - component: {fileID: 8927379203966048876}
   - component: {fileID: 6013318797085700584}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Item_Potion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4943,7 +4943,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8788511134622828855}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bottle_Endurance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4978,7 +4978,7 @@ GameObject:
   - component: {fileID: 1726957241514056409}
   - component: {fileID: 3632448353566956235}
   - component: {fileID: 2271971483455510077}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bottle_green
   m_TagString: Untagged
   m_Icon: {fileID: 0}

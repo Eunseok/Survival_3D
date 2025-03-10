@@ -14,6 +14,9 @@ namespace Framework.Characters
 
         [Tooltip("캐릭터의 질주(Sprint) 속도 (m/s)")] 
         public float SprintSpeed = 5.335f;
+        
+        [Tooltip("질주시 소모되는 스테미나")]
+        public float SprintStaminaCost = 20f;
 
         [Tooltip("캐릭터가 이동 방향을 바라보는 속도")] [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
@@ -39,7 +42,7 @@ namespace Framework.Characters
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
-        private float _terminalVelocity = 53.0f;
+        private readonly float _terminalVelocity = 53.0f;
 
         //애니메이터로 전달할 값
         public float AnimationBlend { get; private set; }
@@ -71,14 +74,19 @@ namespace Framework.Characters
 
         public void Move()
         {
-            // 이동 속도를 설정 (걷기 속도 또는 질주 속도)
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
-
+            
+            bool isSprinting = _input.sprint;
+            
             // 간단한 가속 및 감속 시스템 (제거, 교체 또는 변경이 용이함)
 
             // 참고: Vector2의 == 연산자는 근사 비교를 사용하므로 부동소수점 오류에 안전하며, magnitude보다 성능이 우수함.
             // 입력이 없으면 목표 속도를 0으로 설정
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+            float targetSpeed = 0f;
+            if (_input.move != Vector2.zero)
+            {
+                // 이동 속도를 설정 (걷기 속도 또는 질주 속도)
+                targetSpeed = HandleMovementSpeed(isSprinting);
+            }
 
             // 플레이어의 현재 수평 이동 속도를 가져옴
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -130,6 +138,18 @@ namespace Framework.Characters
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
             
+        }
+        
+        private float HandleMovementSpeed(bool isSprinting)
+        {
+            if (!isSprinting) return MoveSpeed;
+            
+            bool canDash = SignalManager.Instance.EmitSignal<float, bool>(
+                "OnUseStamina", SprintStaminaCost * Time.deltaTime);
+            if (canDash)
+                return SprintSpeed;
+            
+            return MoveSpeed;
         }
         
         public void JumpAndGravity(bool grounded)

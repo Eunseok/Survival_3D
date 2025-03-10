@@ -33,8 +33,9 @@ public class MovingPlatform : MonoBehaviour
         _movingToB = !_movingToB; // 방향 전환
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTrEnter(Collision collision)
     {
+        Debug.Log("OnCollisionEnter");
 
             // 충돌된 모든 접점(Contact Point) 검사
             foreach (ContactPoint contact in collision.contacts)

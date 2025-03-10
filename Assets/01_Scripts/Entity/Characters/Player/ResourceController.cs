@@ -20,7 +20,6 @@ public class ResourceController : MonoBehaviour, IDamageable
         _statHandler = GetComponent<StatHandler>();
         
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHeal", Heal);
-        SignalManager.Instance.ConnectSignal<float>("OnPlayerEat", Eat);
         SignalManager.Instance.ConnectSignal<float, bool>("OnUseStamina", UseStamina);
         
         SignalManager.Instance.ConnectSignal<float>("OnPlayerHit", TakeDamage);
@@ -29,13 +28,7 @@ public class ResourceController : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        _statHandler.hunger.PassiveApply();
         _statHandler.stamina.PassiveApply();
-        
-        if(_statHandler.HungerValue <= 0f)
-        {
-            _statHandler.health.PassiveApply();
-        }
     
         if( _statHandler.HealthValue <= 0f)
         {
@@ -50,11 +43,7 @@ public class ResourceController : MonoBehaviour, IDamageable
         if(amount < 0f)
              OnTakeDamage?.Invoke();
     }
-
-    private void Eat(float amount)
-    { 
-        _statHandler.hunger.Apply(amount);
-    }
+    
 
     private bool UseStamina(float amount)
     {
@@ -85,17 +74,17 @@ public class ResourceController : MonoBehaviour, IDamageable
     {
         if (!_isSpeedBoosted)
         {
-            StartCoroutine(SpeedBuffRoutine(boostAmount, duration));
+           // StartCoroutine(SpeedBuffRoutine(boostAmount, duration));
         }
     }
 
-    private IEnumerator SpeedBuffRoutine(float boostAmount, float duration)
-    {
-        _isSpeedBoosted = true;
-        _statHandler.Speed += boostAmount; // 속도 증가
-        yield return new WaitForSeconds(duration); // 버프 지속 시간 대기
-        _statHandler.Speed -= boostAmount; // 원래 속도로 복구
-        _isSpeedBoosted = false;
-    }
+    // private IEnumerator SpeedBuffRoutine(float boostAmount, float duration)
+    // {
+    //     _isSpeedBoosted = true;
+    //     _statHandler.Speed += boostAmount; // 속도 증가
+    //     yield return new WaitForSeconds(duration); // 버프 지속 시간 대기
+    //     _statHandler.Speed -= boostAmount; // 원래 속도로 복구
+    //     _isSpeedBoosted = false;
+    // }
 
 }
