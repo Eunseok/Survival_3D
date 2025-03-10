@@ -1,185 +1,105 @@
-using Managers;
+using Framework.Characters;
 using UnityEngine;
 
-namespace Framework.Characters
+[RequireComponent(typeof(Rigidbody))]
+public class ClimbingMovementController : MonoBehaviour
 {
-    public class ClimbingMovementController : MovementController
+    [Tooltip("캐릭터가 이동 방향을 바라보는 속도")] [Range(0.0f, 0.3f)]
+    public float RotationSmoothTime = 0.12f;
+
+    [Tooltip("가속 및 감속 비율")] public float SpeedChangeRate = 10.0f;
+
+    [Space(10)] [Tooltip("플레이어가 점프할 수 있는 최대 높이")]
+    public float JumpHeight = 1.2f;
+
+    [Tooltip("캐릭터가 사용할 자체 중력 값 (엔진 기본값은 -9.81f)")]
+    public float Gravity = -15.0f;
+
+    [Space(10)] [Tooltip("점프 후 다시 점프할 수 있기까지 필요한 시간 (0f으로 설정하면 즉시 점프 가능)")]
+    public float JumpTimeout = 0.50f;
+
+    [Tooltip("캐릭터가 낙하 상태로 진입하기 전까지 걸리는 시간 (계단 내려갈 때 유용)")]
+    public float FallTimeout = 0.15f;
+
+    // 플레이어 이동 관련 변수
+    private float _speed;
+    private float _targetRotation = 0.0f;
+    private float _rotationVelocity;
+    protected float _verticalVelocity;
+    private readonly float _terminalVelocity = 53.0f;
+
+    //애니메이터로 전달할 값
+    public float AnimationBlend { get; private set; }
+    public float InputMagnitude { get; private set; }
+    public bool IsJumping { get; private set; } // 점프 중인지 저장
+    public bool IsFreeFalling { get; private set; } // 낙하 중인지 저장
+
+
+    // 점프 및 낙하 시간 변수
+    private float _jumpTimeoutDelta;
+    private float _fallTimeoutDelta;
+
+    private CharacterController _controller;
+    private InputHandler _input;
+    private GameObject _mainCamera;
+    private StatHandler _statHandler;
+
+
+    public void Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
     {
-        // --- Climbing 관련 변수 ---
-        [Header("Climbing Settings")]
-        [Tooltip("벽에 평행한 정렬 임계값")]
-        public float AlignmentThreshold = 0.8f;
-        [Tooltip("클라밍 시작까지 소요 시간")]
-        public float RequiredClimbTime = 0.5f;
+        _input = input;
+        _mainCamera = mainCamera;
+        _controller = GetComponent<CharacterController>();
+        _statHandler = statHandler;
 
-        public float ClimbStaminaCost = 20f;
+        // 점프 및 낙하 타이머 초기화
+        _jumpTimeoutDelta = JumpTimeout;
+        _fallTimeoutDelta = FallTimeout;
+    }
 
-        private bool _isClimbing;
-        private float _climbTimer;
+    public void Move()
+    {
+        float targetSpeed = _statHandler.ClimbSpeed;
+        if (_input.move == Vector2.zero) targetSpeed = 0f;
 
-        private StatHandler _statHandler;
+        // 현재 이동 속도 계산 (이제 Y축 이동도 포함)
+        float currentSpeed = new Vector3(_controller.velocity.x, _controller.velocity.y, _controller.velocity.z).magnitude;
 
-        /// <summary>
-        /// 클라밍 관련 초기화
-        /// </summary>
-        public override void  Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
+        float speedOffset = 0.1f;
+        InputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+
+        // 목표 속도에 맞춰 가속 또는 감속
+        if (currentSpeed < targetSpeed - speedOffset || currentSpeed > targetSpeed + speedOffset)
         {
-            base.Initialize(input, mainCamera, statHandler);
-            _statHandler = statHandler;
+            _speed = Mathf.Lerp(currentSpeed, targetSpeed * InputMagnitude, Time.deltaTime * SpeedChangeRate);
+            _speed = Mathf.Round(_speed * 1000f) / 1000f;
+        }
+        else
+        {
+            _speed = targetSpeed;
         }
 
-        public override void Move()
+        // 애니메이션 블렌딩 처리
+        AnimationBlend = Mathf.Lerp(AnimationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+        if (AnimationBlend < 0.01f) AnimationBlend = 0f;
+
+        // 이동 방향을 정규화 (이제 Y축도 포함)
+        Vector3 inputDirection = new Vector3(_input.move.x, _input.move.y, 0.0f).normalized;
+
+        // 플레이어가 이동 방향을 바라보도록 회전 (이제 상하 이동도 고려)
+        if (_input.move != Vector2.zero)
         {
-            
+            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.y) * Mathf.Rad2Deg;
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.z, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
+
+            // 플레이어를 벽 표면을 기준으로 회전
+            transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotation);
         }
 
-        public void MoveWithClimbing(bool grounded, bool isOnWall, Vector3 wallNormal)
-        {
-            if (_isClimbing)
-            {
-                HandleClimbing(isOnWall, wallNormal);
-            }
-            else
-            {
-                AttachToWallIfPossible(isOnWall, wallNormal);
-                base.Move();
-            }
+        // 목표 이동 방향 설정 (이제 위/아래 이동도 가능)
+        Vector3 targetDirection = new Vector3(inputDirection.x, inputDirection.y, 0.0f);
 
-            JumpAndGravity(grounded);
-        }
-
-        /// <summary>
-        /// 클라밍 상태 처리
-        /// </summary>
-        private void HandleClimbing(bool isOnWall, Vector3 wallNormal)
-        {
-            if (!CanClimb(isOnWall))
-                return;
-
-            UseStaminaOrStopClimbing();
-
-            // 벽 위로 이동 계산
-            Vector3 climbDirection = CalculateClimbDirection(wallNormal);
-            MoveAndRotateForClimbing(climbDirection, wallNormal);
-        }
-
-        /// <summary>
-        /// 클라밍 가능 여부 판정
-        /// </summary>
-        private bool CanClimb(bool isOnWall)
-        {
-            if (!isOnWall || !_isClimbing)
-            {
-                ResetClimbingState();
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 클라밍 중 스태미나 소모
-        /// </summary>
-        private void UseStaminaOrStopClimbing()
-        {
-            bool hasStamina = SignalManager.Instance.EmitSignal<float, bool>("OnUseStamina", ClimbStaminaCost * Time.deltaTime);
-            if (!hasStamina)
-                ResetClimbingState();
-        }
-
-        /// <summary>
-        /// 벽에 붙을 수 있는지 평가 및 처리
-        /// </summary>
-        private void AttachToWallIfPossible(bool isOnWall, Vector3 wallNormal)
-        {
-            if (isOnWall && !_isClimbing && _input.move != Vector2.zero)
-            {
-                float alignment = Vector3.Dot(transform.forward, -wallNormal);
-
-                if (alignment >= AlignmentThreshold)
-                {
-                    _climbTimer += Time.deltaTime;
-                    if (_climbTimer >= RequiredClimbTime)
-                        StartClimbing();
-                }
-                else
-                {
-                    _climbTimer = 0f;
-                }
-            }
-            else
-            {
-                _climbTimer = 0f;
-            }
-        }
-
-        /// <summary>
-        /// 클라밍 시작 처리
-        /// </summary>
-        private void StartClimbing()
-        {
-            _isClimbing = true;
-            _verticalVelocity = 0f;
-        }
-
-        /// <summary>
-        /// 클라밍 이동 및 회전 처리
-        /// </summary>
-        private void MoveAndRotateForClimbing(Vector3 direction, Vector3 wallNormal)
-        {
-            if (IsFreeFalling && Vector3.Dot(Vector3.down, direction) > 0f)
-            {
-                ResetClimbingState();
-                return;
-            }
-
-            // 벽의 법선 벡터 활용하여 벽 방향 조정
-            Vector3 wallForward = -wallNormal;
-            _controller.Move(direction.normalized * _statHandler.ClimbSpeed * Time.deltaTime);
-            SmoothlyRotateTowards(wallForward);
-        }
-
-        /// <summary>
-        /// 벽을 기준으로 이동 방향 계산
-        /// </summary>
-        private Vector3 CalculateClimbDirection(Vector3 wallNormal)
-        {
-            return Vector3.Cross(wallNormal, Vector3.Cross(Vector3.up, wallNormal)).normalized * _input.move.y -
-                   Vector3.Cross(Vector3.up, wallNormal).normalized * _input.move.x;
-        }
-
-        /// <summary>
-        /// 지정된 방향으로 부드럽게 회전
-        /// </summary>
-        private void SmoothlyRotateTowards(Vector3 lookDirection)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, RotationSmoothTime * Time.deltaTime);
-        }
-
-        /// <summary>
-        /// 클라밍 상태 초기화
-        /// </summary>
-        private void ResetClimbingState()
-        {
-            _isClimbing = false;
-            _verticalVelocity = 0f;
-        }
-
-        /// <summary>
-        /// 점프 동작 (클라밍 중 점프 포함)
-        /// </summary>
-        public void JumpWithClimbing(Vector3 wallNormal)
-        {
-            if (_isClimbing)
-            {
-                Vector3 jumpDirection = (wallNormal * 2f + Vector3.up).normalized;
-                ApplytForceY(_statHandler.JumpForce);
-                ResetClimbingState();
-            }
-            else
-            {
-                ApplytForceY(_statHandler.JumpForce);
-            }
-        }
+        // 이동 적용 (이제 Y축 이동도 포함)
+        _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime));
     }
 }

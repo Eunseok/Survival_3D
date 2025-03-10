@@ -20,8 +20,8 @@ public class StatHandler : MonoBehaviour
     [Tooltip("등반시 소모되는 스테미나")]
     public float ClibStaminaCost = 20f;
     
-    [Tooltip("점프힘")]
-    public float ClibStaminaCost = 20f;
+    [Space(10)] [Tooltip("플레이어가 점프할 수 있는 최대 높이")]
+    public float JumpHeight = 1.2f;
     
     [Header("Conditions")] 
     public Condition health;

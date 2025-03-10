@@ -48,19 +48,18 @@ namespace Framework.Characters
         public bool IsJumping { get; private set; }     // 점프 중인지 저장
         public bool IsFreeFalling { get; private set; } // 낙하 중인지 저장
 
-
-
+        
         // 점프 및 낙하 시간 변수
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
+
+        private CharacterController _controller;
+        private InputHandler _input;
+        private GameObject _mainCamera;
+        private StatHandler _statHandler;
         
-        protected CharacterController _controller;
-        protected InputHandler _input;
-        protected GameObject _mainCamera;
-        protected StatHandler _statHandler;
         
-        
-        public virtual void  Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
+        public  void  Initialize(InputHandler input, GameObject mainCamera, StatHandler statHandler)
         {
             _input = input;
             _mainCamera = mainCamera;
@@ -72,7 +71,7 @@ namespace Framework.Characters
             _fallTimeoutDelta = FallTimeout;
         }
 
-        public virtual void  Move()
+        public  void  Move()
         {
             
             bool isSprinting = _input.sprint;

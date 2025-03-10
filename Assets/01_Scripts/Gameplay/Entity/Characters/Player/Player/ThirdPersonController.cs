@@ -24,6 +24,7 @@ public class ThirdPersonController : MonoBehaviour
     private AnimationController _animationController;
     private GroundChecker _groundChecker;
     private MovementController _movementController;
+    private ClimbingMovementController _climbingMovementController;
     private ThirdPersonCameraController _cameraController;
     private StatHandler _statHandler;
 
@@ -55,9 +56,11 @@ public class ThirdPersonController : MonoBehaviour
         _movementController = GetComponent<MovementController>();
         _cameraController = GetComponent<ThirdPersonCameraController>();
         _statHandler = GetComponent<StatHandler>();
+        _climbingMovementController = GetComponent<ClimbingMovementController>();
         
         _animationController.Initialize(_animator);
         _movementController.Initialize(_input, _mainCamera,_statHandler);
+        _climbingMovementController.Initialize(_input, _mainCamera, _statHandler);
     }
 
     private void Update()
@@ -72,7 +75,8 @@ public class ThirdPersonController : MonoBehaviour
         _animationController.SetJumpState(_movementController.IsJumping);
         _animationController.SetFreeFallState(_movementController.IsFreeFalling);
         
-        _movementController.Move();
+        //_movementController.Move();
+        _climbingMovementController.Move();
         _animationController.UpdateMovementState(
             _movementController.AnimationBlend,
             _movementController.InputMagnitude);
