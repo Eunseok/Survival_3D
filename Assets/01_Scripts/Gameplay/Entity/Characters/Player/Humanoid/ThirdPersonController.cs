@@ -24,7 +24,6 @@ public class ThirdPersonController : MonoBehaviour
     private AnimationController _animationController;
     private GroundChecker _groundChecker;
     private MovementController _movementController;
-    private ClimbingMovementController _climbingMovementController;
     private ThirdPersonCameraController _cameraController;
     private StatHandler _statHandler;
 
@@ -45,22 +44,16 @@ public class ThirdPersonController : MonoBehaviour
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<InputHandler>();
-#if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
-#else
-			Debug.LogError("Starter Assets 패키지에 필요한 의존성이 없습니다. Tools/Starter Assets/Reinstall Dependencies를 사용하여 복구하세요.");
-#endif
         
         _animationController = GetComponent<AnimationController>();
         _groundChecker = GetComponent<GroundChecker>();
         _movementController = GetComponent<MovementController>();
         _cameraController = GetComponent<ThirdPersonCameraController>();
         _statHandler = GetComponent<StatHandler>();
-        _climbingMovementController = GetComponent<ClimbingMovementController>();
         
         _animationController.Initialize(_animator);
         _movementController.Initialize(_input, _mainCamera,_statHandler);
-        _climbingMovementController.Initialize(_input, _mainCamera, _statHandler);
     }
 
     private void Update()
@@ -75,8 +68,7 @@ public class ThirdPersonController : MonoBehaviour
         _animationController.SetJumpState(_movementController.IsJumping);
         _animationController.SetFreeFallState(_movementController.IsFreeFalling);
         
-        //_movementController.Move();
-        _climbingMovementController.Move();
+        _movementController.Move();
         _animationController.UpdateMovementState(
             _movementController.AnimationBlend,
             _movementController.InputMagnitude);

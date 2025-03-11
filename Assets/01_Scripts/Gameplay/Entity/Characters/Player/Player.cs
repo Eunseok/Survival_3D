@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
-    [FormerlySerializedAs("resourceController")] public ResourceHandler ResourceHandler;
+    public ResourceHandler ResourceHandler;
     public StatHandler statHandler;
    // public InventorySystem playerInventory;
     
