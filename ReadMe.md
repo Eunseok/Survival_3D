@@ -8,7 +8,7 @@
 
    - RigidBody
 
-     ![Rigidbody이동](../Images/ReadMe/Rigidbody이동.gif)
+     ![Rigidbody이동](ReadMe/Rigidbody이동.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -59,7 +59,7 @@
 
    - CharacterController
 
-     ![CharacterController이동](../Images/ReadMe/CharacterController이동.gif)
+     ![CharacterController이동](ReadMe/CharacterController이동.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -202,7 +202,7 @@
 
 2. 체력바 UI (난이도 : ★★☆☆☆)
 
-   ![HealthBar](../Images/ReadMe/HealthBar.gif)
+   ![HealthBar](ReadMe/HealthBar.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -242,7 +242,7 @@
 
 3. 동적 환경 조사 Raycast UI (난이도: ★★★☆☆)
 
-   ![Interaction](../Images/ReadMe/Interaction.gif)
+   ![Interaction](ReadMe/Interaction.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -289,7 +289,7 @@
 
 4. 점프대 Rigidbody ForceMode (난이도 : ★★★☆☆)
 
-   ![Trampoline](../Images/ReadMe/Trampoline.gif)
+   ![Trampoline](ReadMe/Trampoline.gif)
 
    <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -345,6 +345,7 @@
    </details>
 
 5. 아이템 데이터 ScriptableObject (난이도 : ★★★☆☆)
+   <img width="179" alt="image" src="https://github.com/user-attachments/assets/05cb7ba6-bb48-4b44-b175-51f01c9b04c1" />
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -464,7 +465,7 @@
 
 6. 아이템 사용 Coroutine (난이도 : ★★★☆☆)
 
-   ![UseItem](../Images/ReadMe/UseItem.gif)
+   ![UseItem](ReadMe/UseItem.gif)
 
     <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -531,7 +532,7 @@
 
 1. 추가 UI (난이도 : ★★☆☆☆) (스태미나)
 
-   [이미지]
+   ![Stamina](https://github.com/user-attachments/assets/550ac33a-b88a-4fc8-ab8a-6707dc3aa06a)
 
     <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -576,7 +577,7 @@
 
 2. 3인칭 시점 (난이도 : ★★★☆☆)
 
-   ​ ![ThirdCamera](../Images/ReadMe/ThirdCamera.gif)
+   ​ ![ThirdCamera](ReadMe/ThirdCamera.gif)
 
    - 기본 카메라
 
@@ -792,7 +793,7 @@
 
 3. 움직이는 플랫폼 구현 (난이도 : ★★★☆☆)
 
-   ![MovingPlatform](../Images/ReadMe/MovingPlatform.gif)
+   ![MovingPlatform](ReadMe/MovingPlatform.gif)
 
     <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -845,7 +846,7 @@
 
 4. 벽 타기 및 매달리기 (난이도 : ★★★★☆)
 
-   [이미지]
+   ![Climb](https://github.com/user-attachments/assets/29215ec1-e92a-4066-a4e3-ae213c340a55)
 
     <details markdown="1"> <summary>코드스니펫</summary>
 
