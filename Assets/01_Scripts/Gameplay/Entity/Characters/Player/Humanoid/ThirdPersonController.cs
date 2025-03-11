@@ -52,31 +52,28 @@ public class ThirdPersonController : MonoBehaviour
         _cameraController = GetComponent<ThirdPersonCameraController>();
         _statHandler = GetComponent<StatHandler>();
         
-        _animationController.Initialize(_animator);
-        _movementController.Initialize(_input, _mainCamera,_statHandler);
+        _animationController?.Initialize(_animator);
+        _movementController?.Initialize(_input, _mainCamera,_statHandler);
     }
 
     private void Update()
     {
-        _hasAnimator = TryGetComponent(out _animator);
-
-                
         bool isGrounded = _groundChecker.GroundedCheck();
-        _animationController.SetGroundedState(isGrounded);
+        _animationController?.SetGroundedState(isGrounded);
         
-        _movementController.JumpAndGravity(isGrounded);
-        _animationController.SetJumpState(_movementController.IsJumping);
-        _animationController.SetFreeFallState(_movementController.IsFreeFalling);
+        _movementController?.JumpAndGravity(isGrounded);
+        _animationController?.SetJumpState(_movementController.IsJumping);
+        _animationController?.SetFreeFallState(_movementController.IsFreeFalling);
         
-        _movementController.Move();
-        _animationController.UpdateMovementState(
+        _movementController?.Move();
+        _animationController?.UpdateMovementState(
             _movementController.AnimationBlend,
             _movementController.InputMagnitude);
     }
 
     private void LateUpdate()
     { 
-        _cameraController.CameraRotation(_input.look);
+        _cameraController?.CameraRotation(_input.look);
     }
     
 }

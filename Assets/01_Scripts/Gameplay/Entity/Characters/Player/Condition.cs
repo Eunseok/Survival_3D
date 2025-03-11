@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace _01_Scripts.Gameplay.Entity.Characters.Player.Old
+namespace Scripts.Characters
 {
     [Serializable]
     public class Condition

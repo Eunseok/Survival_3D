@@ -1809,7 +1809,6 @@ GameObject:
   - component: {fileID: 5792827323538709009}
   - component: {fileID: 7175540987027234771}
   - component: {fileID: 6997386695372233472}
-  - component: {fileID: 7351005827949435566}
   m_Layer: 6
   m_Name: PlayerArmature
   m_TagString: Player
@@ -2051,6 +2050,9 @@ MonoBehaviour:
   MoveSpeed: 2
   SprintSpeed: 5.335
   SprintStaminaCost: 20
+  ClimbSpeed: 3
+  ClibStaminaCost: 20
+  JumpHeight: 1.2
   health:
     maxValue: 100
     curValue: 100
@@ -2104,18 +2106,6 @@ MonoBehaviour:
     m_Bits: 128
   promptText: {fileID: 0}
   height: 1.7
---- !u!114 &7351005827949435566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6318281255291546666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304cc376c48f41b8b995cd6f8d0a3a4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6418516175836516638
 GameObject:
   m_ObjectHideFlags: 0

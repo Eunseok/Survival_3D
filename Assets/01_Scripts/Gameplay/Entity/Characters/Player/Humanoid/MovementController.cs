@@ -39,7 +39,7 @@ namespace Framework.Characters
         private float _speed;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
-        protected float _verticalVelocity;
+        private float _verticalVelocity;
         private readonly float _terminalVelocity = 53.0f;
 
         //애니메이터로 전달할 값
@@ -139,7 +139,7 @@ namespace Framework.Characters
             
         }
         
-        public virtual void JumpAndGravity(bool grounded)
+        public  void JumpAndGravity(bool grounded)
         {
             if (grounded) // 플레이어가 지면에 있는 경우
             {
@@ -160,6 +160,7 @@ namespace Framework.Characters
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     // 점프 공식: H = 점프 높이, G = 중력 값
+                    // H * -2 * G 
                     // 필요한 초기 속도를 계산하여 점프 높이를 설정
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
@@ -176,6 +177,7 @@ namespace Framework.Characters
             {
                 // 점프 타이머 초기화
                 _jumpTimeoutDelta = JumpTimeout;
+                
 
                 // 낙하 타이머 처리
                 if (_fallTimeoutDelta >= 0.0f)
