@@ -1,9 +1,7 @@
-using System;
 using DefaultNamespace;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace _01_Scripts.Gameplay.Camera
+namespace _01_Scripts.Gameplay.Entity.Characters.Player.Humanoid.Camera
 {
     public class ThirdPersonCameraController : MonoBehaviour
     {
@@ -29,21 +27,12 @@ namespace _01_Scripts.Gameplay.Camera
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
         
-#if ENABLE_INPUT_SYSTEM
-        private PlayerInput _playerInput;
-#endif
         
         private const float _threshold = 0.01f; // 작은 입력값 무시하는 임계값
         
 
         private void Start()
         {
-#if ENABLE_INPUT_SYSTEM
-            _playerInput = GetComponent<PlayerInput>();
-#else
-			Debug.LogError("Starter Assets 패키지에 필요한 의존성이 없습니다. Tools/Starter Assets/Reinstall Dependencies를 사용하여 복구하세요.");
-#endif
-            
             // 게임 시작 시 카메라의 초기 (좌우 회전)Yaw 값을 가져와서 설정
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
         }

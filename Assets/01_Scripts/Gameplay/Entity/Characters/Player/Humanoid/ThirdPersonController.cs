@@ -1,4 +1,4 @@
-using _01_Scripts.Gameplay.Camera;
+using _01_Scripts.Gameplay.Entity.Characters.Player.Humanoid.Camera;
 using Framework.Characters;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM

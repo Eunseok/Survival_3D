@@ -302,6 +302,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1642109706954202006, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: wallCheckDistance
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642109706954202006, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: wallCheckRadiusMultiplier
+      value: 0.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: ClimbSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: ClibStaminaCost
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8124443212518975844, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.8
@@ -473,6 +489,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7006151541030084133, guid: 83fd701ad012b4472aba94bafbe40b76, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1981458920}
     - target: {fileID: 8184700650313100514, guid: 83fd701ad012b4472aba94bafbe40b76, type: 3}
       propertyPath: m_Name
       value: ThirdPersonCamera
@@ -482,6 +502,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 83fd701ad012b4472aba94bafbe40b76, type: 3}
+--- !u!4 &1981458920 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8124443212518975844, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+  m_PrefabInstance: {fileID: 1306840453}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2094081091
 GameObject:
   m_ObjectHideFlags: 0
