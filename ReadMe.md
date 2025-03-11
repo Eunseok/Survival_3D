@@ -345,6 +345,7 @@
    </details>
 
 5. 아이템 데이터 ScriptableObject (난이도 : ★★★☆☆)
+   
    <img width="179" alt="image" src="https://github.com/user-attachments/assets/05cb7ba6-bb48-4b44-b175-51f01c9b04c1" />   
 
    <details markdown="1"> <summary>코드스니펫</summary>
@@ -463,7 +464,7 @@
 
    </details>
 
-6. 아이템 사용 Coroutine (난이도 : ★★★☆☆)
+7. 아이템 사용 Coroutine (난이도 : ★★★☆☆)
 
    ![UseItem](ReadMe/UseItem.gif)
 
