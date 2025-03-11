@@ -52,14 +52,46 @@ public class PlayerMovement : MonoBehaviour
 
         UseStaminaOrStopClimbing(_climbStaminaCostPerSecond);
 
-        Vector3 climbDirection = CalculateClimbDirection();
-        MoveAndRotateForClimbing(climbDirection);
+        Vector3 wallNormal = _characterBody.WallHitNormal;
+
+        Vector3 rightVector = Vector3.Cross(Vector3.up, wallNormal).normalized;
+        Vector3 climbAxis = Vector3.Cross(wallNormal, rightVector).normalized;
+
+        Vector3 climbDirection = climbAxis * _moveDirection.y - rightVector * _moveDirection.x;
+
+        if (_characterBody.IsOnGrounded && Vector3.Dot(Vector3.down, climbDirection) > 0)
+        {
+            ResetClimbingState();
+            return;
+        }
+
+        Vector3 wallForward = -_characterBody.WallHitNormal;
+        climbDirection *= _statHandler.ClimbSpeed * Time.deltaTime;
+
+        _playerRigidbody.AddForce(climbDirection, ForceMode.VelocityChange);
+        
+        SmoothlyRotateTowardsDirection(wallForward);
     }
 
     private void HandleMovement()
     {
-        Vector3 direction = CalculateMovementDirection();
-        ApplyMovementPhysics(direction);
+        Transform cameraTransform = _mainCamera.transform;
+
+        Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
+        Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+
+        Vector3 direction = forward * _moveDirection.y + right * _moveDirection.x;
+        float speed = _statHandler.MoveSpeed;
+
+        if (_isDashing && _characterBody.IsMoving())
+            speed = HandleDash(speed);
+
+        if (_moveDirection != Vector2.zero)
+            SmoothlyRotateTowardsDirection(direction);
+
+        direction *= speed * Time.deltaTime;
+        _playerRigidbody.AddForce(direction, ForceMode.VelocityChange);
+        
         AttachToWallIfPossible();
     }
 
@@ -101,16 +133,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
-    private Vector3 CalculateMovementDirection()
-    {
-        Transform cameraTransform = _mainCamera.transform;
-
-        Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-        Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
-
-        return forward * _moveDirection.y + right * _moveDirection.x;
-    }
+    
 
     private void ApplyMovementPhysics(Vector3 direction)
     {
@@ -167,34 +190,11 @@ public class PlayerMovement : MonoBehaviour
         _playerRigidbody.velocity = Vector3.zero;
         _playerRigidbody.useGravity = false;
     }
-
-    private void MoveAndRotateForClimbing(Vector3 direction)
-    {
-        if (_characterBody.IsOnGrounded && Vector3.Dot(Vector3.down, direction) > 0)
-        {
-            ResetClimbingState();
-            return;
-        }
-
-        Vector3 wallForward = -_characterBody.WallHitNormal;
-        direction *= _statHandler.ClimbSpeed * Time.deltaTime;
-
-        _playerRigidbody.AddForce(direction, ForceMode.VelocityChange);
-        SmoothlyRotateTowardsDirection(wallForward);
-    }
-
+    
     private void SmoothlyRotateTowardsDirection(Vector3 lookDirection)
     {
         Quaternion targetRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
-    }
-
-    private Vector3 CalculateClimbDirection()
-    {
-        Vector3 wallNormal = _characterBody.WallHitNormal;
-
-        return Vector3.Cross(wallNormal, Vector3.Cross(Vector3.up, wallNormal)).normalized * _moveDirection.y -
-               Vector3.Cross(Vector3.up, wallNormal).normalized * _moveDirection.x;
     }
 
     private void ResetClimbingState()

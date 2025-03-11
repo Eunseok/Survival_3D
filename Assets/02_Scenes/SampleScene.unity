@@ -311,8 +311,16 @@ PrefabInstance:
       value: 0.34
       objectReference: {fileID: 0}
     - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: MoveSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
       propertyPath: ClimbSpeed
-      value: 15
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
+      propertyPath: SprintSpeed
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6862157033301227459, guid: 56931c08eea5a4ce6ae72b04c8663e7a, type: 3}
       propertyPath: ClibStaminaCost

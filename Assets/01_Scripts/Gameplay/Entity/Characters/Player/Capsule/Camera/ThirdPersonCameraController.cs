@@ -79,7 +79,7 @@ namespace _01_Scripts.Gameplay.Entity.Characters.Player.Capsule.Camera
         {
             if (!target) return;
 
-            // 카메라 위치 업데이트 (물리 기반 이동 동기화)
+            // 카메라 위치 업데이트 
             var rotation = Quaternion.Euler(_verticalRotation, _horizontalRotation, 0);
 
             // 목표 위치 계산

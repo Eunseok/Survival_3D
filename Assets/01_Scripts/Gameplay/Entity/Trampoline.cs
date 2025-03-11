@@ -45,6 +45,7 @@ public class Trampoline : MonoBehaviour
                 if(_bounceCoroutine != null)
                     StopCoroutine(_bounceCoroutine);
         
+                //애니메이션 코루틴 시작
                 _bounceCoroutine = StartCoroutine(BounceAnimation());
 
                 // 사운드 효과 재생
