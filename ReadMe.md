@@ -7,8 +7,8 @@
 1. **기본 이동 및 점프 Input System, Rigidbody ForceMode (난이도 : ★★☆☆☆)**
 
    - RigidBody
-
-     ![Rigidbody](ReadMe/Rigidbody.gif)
+      
+      ![Rigidbody](https://github.com/user-attachments/assets/68367b8e-1367-4323-95fb-c02310736c32)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -58,8 +58,8 @@
      </details>
 
    - CharacterController
-
-     ![CharacterController](ReadMe/CharacterController.gif)
+  
+      ![CharacterController](https://github.com/user-attachments/assets/08d8392f-c397-4ac8-9f7d-19613f64be2c)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
