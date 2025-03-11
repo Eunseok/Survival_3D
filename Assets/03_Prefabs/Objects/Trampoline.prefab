@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 3976616101176530929}
   - component: {fileID: 4071130097929971967}
   - component: {fileID: 5825557296431160011}
+  - component: {fileID: 3417145027681921438}
   - component: {fileID: 4339014846466884586}
   m_Layer: 0
   m_Name: Trampoline
@@ -140,10 +141,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!65 &5825557296431160011
 BoxCollider:
@@ -166,6 +167,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.0542946, y: 0.30080634, z: 2.0065374}
   m_Center: {x: -0.008144379, y: 0.0042583346, z: -0.0077519417}
+--- !u!65 &3417145027681921438
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637362118515388955}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.0542946, y: 0.31, z: 2.0065374}
+  m_Center: {x: -0.008144379, y: 0.21, z: -0.0077519417}
 --- !u!114 &4339014846466884586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,6 +200,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57350dc049f1405da784d329e26e8a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 300
+  jumpForce: -20
   bounceAnimationDuration: 0.2
   jumpSound: {fileID: 8300000, guid: eaa105377942940818116e55c1b89152, type: 3}

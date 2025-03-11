@@ -1,5 +1,6 @@
 // EquipItemData에 대한 전략 구현
 
+using Managers;
 using Scripts.Items;
 using TMPro;
 using UnityEngine;

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5751576833994432089}
   - component: {fileID: 684554361412794799}
   - component: {fileID: 5009652011112683427}
-  - component: {fileID: 3678423722877885548}
+  - component: {fileID: 7006151541030084133}
   m_Layer: 0
   m_Name: ThirdPersonCamera
   m_TagString: MainCamera
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
---- !u!114 &3678423722877885548
+--- !u!114 &7006151541030084133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,21 +181,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 8184700650313100514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a9e3ea1ddeb44778991fd504065f935, type: 3}
+  m_Script: {fileID: 11500000, guid: 235a5236318f40d99dfd9a0c98efd370, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   layerMask:
     serializedVersion: 2
-    m_Bits: 1975
+    m_Bits: 4023
   distance: 3
   minDistance: 1
-  maxDistance: 7.59
-  height: 2.4
+  maxDistance: 5
+  height: 1.5
   zoomSensitivity: 0.01
-  rotationLimits: {x: -60, y: 50}
-  lookSensitivity: 1
-  smoothSpeed: 20
+  rotationLimits: {x: -40, y: 60}
+  lookSensitivity: 2
+  smoothSpeed: 10
   isOverShoulder: 1
-  shoulderOffset: 0.8
-  allowCharacterRotation: 0
+  shoulderOffset: 0.5
+  allowCharacterRotation: 1
