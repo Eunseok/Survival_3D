@@ -8,7 +8,7 @@
 
    - RigidBody
 
-     ![Rigidbody이동](ReadMe/Rigidbody.gif)
+     ![Rigidbody](ReadMe/Rigidbody.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
@@ -59,7 +59,7 @@
 
    - CharacterController
 
-     ![CharacterController이동](ReadMe/CharacterController.gif)
+     ![CharacterController](ReadMe/CharacterController.gif)
 
      <details markdown="1"> <summary>코드스니펫</summary>
 
